@@ -1,8 +1,8 @@
 # Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study
 
 This repository provides the complete, reproducible Python implementation for the manuscript:
-> **"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"**  
-> *Daksh Kaila, Monika Aggarwal, Samya Muhuri* (Academia Quantum)
+> **"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"**
+> Currently submitted to Academia Quantum
 
 Repository URL: `https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git`
 
