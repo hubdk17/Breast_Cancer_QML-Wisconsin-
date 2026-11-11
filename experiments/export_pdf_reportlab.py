@@ -389,3 +389,4 @@ if __name__ == "__main__":
     md_in = os.path.join(base_dir, "paper", "manuscript_clean_submission.md")
     pdf_out = os.path.join(base_dir, "paper", "manuscript_clean_submission.pdf")
     generate_pdf(md_in, pdf_out)
+

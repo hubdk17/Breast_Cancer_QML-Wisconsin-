@@ -339,8 +339,10 @@ The ablation data in Table 9 and Figure 8 provide profound mechanistic clarity:
 
 ---
 
-### 3.9 [ADDED] Generalization Across Multiple Diverse Biomedical Benchmarks
-To determine whether the principles of Importance-Balanced Interleaved Projection generalize beyond the WDBC breast cancer dataset, we extended our evaluation to three additional clinical datasets from the UCI Machine Learning Repository representing distinct organ systems, pathological modalities, sample sizes, and feature counts:
+### 3.9 [ADDED] Theoretical Extension: Validating the IBIP Principle Across Diverse Biomedical Domains
+Having comprehensively validated IBIP on breast cancer cytology, a critical theoretical question emerges: **Is the success of IBIP unique to the Wisconsin Diagnostic Breast Cancer dataset, or does it represent a general design principle for quantum-inspired classifiers across tabular biomedical domains?**
+
+To answer this question, we extended the evaluation to three external clinical datasets with entirely different organ systems, feature spaces, and sample sizes from the UCI Machine Learning Repository:
 1. **Parkinson's Disease (UCI 174, Neurology):** 195 acoustic voice recordings characterized by 22 biomedical speech phonation features (fundamental frequency variation, jitter, shimmer, harmonic-to-noise ratios, and detrended fluctuation analysis). The clinical task is diagnosing Parkinson's disease ($N=147$) from healthy controls ($N=48$).
 2. **Cleveland Heart Disease (UCI 45, Cardiology):** 303 cardiovascular patients characterized by 13 clinical features (resting blood pressure, cholesterol, fasting blood sugar, resting ECG, maximum heart rate achieved, exercise-induced ST depression, fluoroscopy vessels, and thallium scintigraphy). The clinical task is identifying significant coronary stenosis ($>50\%$ arterial narrowing, $N=139$) from non-significant disease ($N=164$).
 3. **Breast Cancer Coimbra (UCI 451, Metabolic Oncology):** 116 female subjects evaluated on 9 routine clinical blood serum biomarkers (Age, BMI, Glucose, Insulin, HOMA-IR, Leptin, Adiponectin, Resistin, and MCP-1). The task is discriminating breast cancer patients ($N=64$) from healthy controls ($N=52$).
