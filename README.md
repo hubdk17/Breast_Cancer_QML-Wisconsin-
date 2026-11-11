@@ -1,150 +1,155 @@
-# Importance-Balanced Interleaved Feature Projection for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study
+# Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study
 
-This repository provides the complete, reproducible implementation for the manuscript:
+This repository provides the complete, reproducible Python implementation for the manuscript:
 > **"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"**  
 > *Daksh Kaila, Monika Aggarwal, Samya Muhuri* (Academia Quantum)
 
----
-
-## 🔬 Key Architectural Highlights
-1. **Importance-Balanced Interleaved Projection (IBIP):**
-   - Ranks 30 cytological features using XGBoost permutation importance strictly on training data (eliminating data leakage).
-   - Distributes features across qubit registers in an interleaved manner to prevent informational concentration.
-2. **Exact Hilbert Space Statevector Quantum Simulation:**
-   - Pure statevector evolution in complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ for $n \in \{2, 3\}$.
-   - Single-qubit rotations: $R_y(\phi_q)$, $R_z(e_q)$, $R_y(v_q)$, $R_z(v_q)$.
-   - Two-qubit interaction topologies:
-     - 2-Qubit: SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT(0→1), Independent.
-     - 3-Qubit: CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent.
-3. **Hybrid Optimization Framework:**
-   - Exact Parameter Shift Rule (PSR) for circuit rotation parameters.
-   - Exact chain-rule backpropagation through non-linear hyperbolic tangent feature projections ($\phi_q = \pi \tanh(W_q^T x_q / \sqrt{|x_q|})$).
-   - Parameter updates modulated via **Superpositional Gradient Descent (SuperGD)**.
-4. **Controlled Like-for-Like Benchmarking:**
-   - 2-qubit and 3-qubit architectures evaluated in separate, unconfounded experimental suites.
-   - Evaluated across 5 identical random seeds (0, 42, 123, 777, 2025) and 5-fold stratified cross-validation.
-   - Paired Student's $t$-test, Wilcoxon signed-rank test, Cohen's $d_z$, and 95% Confidence Intervals.
-   - Benchmarked against classical baselines: Support Vector Machines (RBF and Linear), XGBoost, Ridge Classifier, Logistic Regression, and Random Forest.
-   - Positive class explicitly grounded in clinical diagnosis (Malignant = 1, Benign = 0).
+Repository URL: `https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git`
 
 ---
 
-## 📁 Repository Directory Structure
+## Overview
+
+Quantum-inspired variational classifiers (QIVCs) simulate parameterized quantum circuits on classical computing architectures, leveraging unitary statevector rotations, multi-qubit entangling topologies, and Pauli expectation measurements. This codebase provides a modular, leakage-free benchmark investigating:
+1. **Importance-Balanced Interleaved Projection (IBIP):** Interleaves high-leverage and fine-grained diagnostic features across qubit registers to prevent register starvation and uninformative entanglement.
+2. **Controlled Circuit Interaction Topologies:** Evaluates two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit connection graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) in unconfounded suites.
+3. **Rigorous Benchmarking & Clinical Metrics:** Benchmarks QIVCs against 6 classical machine learning baselines (SVM RBF/Linear, XGBoost, Ridge, Logistic Regression, Random Forest) across 5-seed, 20-seed, and 5-fold cross-validation evaluations, reporting Accuracy, Sensitivity (Malignant Recall), Specificity (Benign Recall), Precision, F1-Score, ROC-AUC, and full confusion matrices.
+4. **Generalization Beyond WDBC:** Evaluates IBIP across four distinct biomedical benchmarks: Wisconsin Diagnostic Breast Cancer (WDBC), Parkinson's Disease (UCI 174), Cleveland Heart Disease (UCI 45), and Breast Cancer Coimbra (UCI 451).
+
+---
+
+## Directory Structure
 
 ```
 BreastCancer_QML/
 ├── data/
-│   ├── download_data.py          # Script to download and verify WDBC dataset
-│   └── wdbc.csv                  # Wisconsin Diagnostic Breast Cancer dataset (569 samples, 30 features)
+│   ├── download_all_biomedical_data.py          # Downloads & prepares WDBC, Parkinson's, Heart Disease, Coimbra
+│   ├── wdbc.csv                                 # 569 samples, 30 cytological features (breast oncology)
+│   ├── parkinsons.csv                           # 195 samples, 22 acoustic features (neurology)
+│   ├── heart_disease.csv                        # 303 samples, 13 cardiovascular features (cardiology)
+│   └── coimbra.csv                              # 116 samples, 9 serum biomarker features (metabolism)
 ├── src/
 │   ├── __init__.py
-│   ├── dataset.py                # Dataset loading, StandardScaler (leakage-free), stratified splits
-│   ├── ranking.py                # XGBoost permutation importance & IBIP / Sequential allocation
-│   ├── quantum_circuit.py        # Statevector quantum simulator, unitary gates, expectation values
-│   ├── models.py                 # QuantumInspiredClassifier with PSR, SuperGD, and tensor contractions
-│   ├── optimizers.py             # SuperGD, standard SGD, and Adam update rules
-│   ├── classical_baselines.py    # SVM, XGBoost, Ridge, Logistic Regression, Random Forest
-│   └── evaluation.py             # Paired statistical tests (t-test, Wilcoxon, Cohen's d_z, 95% CI)
+│   ├── dataset.py                               # Preprocessing, train/test splitting, stratified K-fold
+│   ├── ranking.py                               # Feature rankers (XGBoost, RF, Mutual Info, ANOVA) & IBIP allocations
+│   ├── quantum_circuit.py                       # Exact complex statevector simulator & unitary gate matrices
+│   ├── models.py                                # Fast tensor-contraction QIVC simulator with PSR and SuperGD
+│   ├── optimizers.py                            # Superpositional Gradient Descent (SuperGD), SGD, Adam
+│   ├── classical_baselines.py                   # Standardized SVM, XGBoost, Ridge, Logistic Regression, RF
+│   └── evaluation.py                            # Paired Student's t-test, Wilcoxon signed-rank, Cohen's d_z, 95% CIs
 ├── experiments/
-│   ├── reproduce_original_paper.py              # Exact reproduction of original paper tables & figures
-│   ├── debug_iswap.py                           # Audit and verification of the iSWAP unitary matrix
-│   ├── run_classical_baselines.py               # Classical baselines 5-seed and 5-fold CV evaluation
-│   ├── run_controlled_experiments_parallel.py   # Multi-process controlled 2Q & 3Q experiment suites
-│   └── generate_publication_figures.py          # High-resolution (300 DPI) figure generation
+│   ├── reproduce_original_paper.py              # Reproduction of original manuscript exploratory tables
+│   ├── debug_iswap.py                           # Audit & verification of unitary iSWAP complex matrix
+│   ├── run_classical_baselines.py               # Evaluation of 6 classical models (seeds & 5-fold CV)
+│   ├── run_controlled_experiments_parallel.py   # Controlled 2Q and 3Q suites under IBIP & Sequential
+│   ├── run_4way_ablation.py                     # 4-way ablation (Sequential, Random, Importance-Blocked, IBIP)
+│   ├── run_multi_biomedical_benchmarks.py       # Cross-dataset generalization across all 4 biomedical datasets
+│   ├── run_ranking_ablation.py                  # Evaluation of 4 distinct ranking criteria across 10 seeds
+│   ├── analyze_topology_quantitatively.py       # Von Neumann entanglement entropy & graph distance analysis
+│   ├── run_20seed_verification.py               # Expanded 20-seed replication and paired statistics
+│   └── generate_publication_figures.py          # High-resolution (300 DPI) publication figure generation
 ├── results/
-│   ├── tables/                   # Generated CSV tables (summaries, per-seed runs, paired statistics)
-│   └── figures/                  # Publication-grade figures (PNG, 300 DPI)
+│   ├── tables/                                  # CSV results tables, paired statistical contrasts, CV summaries
+│   └── figures/                                 # Publication-grade figures (PNG, 300 DPI)
 ├── paper/
 │   ├── manuscript_marked_revision.md            # Complete revised manuscript with all revision markings
 │   └── response_to_reviewers.md                 # Detailed point-by-point response to editor and reviewers
-├── requirements.txt              # Environment dependencies
-└── README.md                     # Comprehensive documentation
+├── requirements.txt                             # Python dependencies
+└── README.md                                    # Documentation and reproduction guide
 ```
 
 ---
 
-## 🚀 Installation & Environment Setup
+## Installation & Environment Setup
 
-Python version required: **Python 3.11.9**
+Environment tested with **Python 3.11.9**:
 
 ```bash
 # Clone the repository
-git clone https://github.com/dakshkaila/BreastCancer_QIVC.git
-cd BreastCancer_QIVC
+git clone https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git
+cd Breast_Cancer_QML-Wisconsin-
 
-# Create virtual environment with Python 3.11.9
+# Create and activate virtual environment
 python -m venv venv
 
-# Activate virtual environment
 # Windows:
 .\venv\Scripts\activate
-# Linux/macOS:
+# Linux / macOS:
 source venv/bin/activate
 
-# Install required dependencies
-pip install --upgrade pip
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ---
 
-## 🏃 Reproducing Experimental Results
+## Reproducing Results
 
-### 1. Download & Verify Dataset
+All experimental scripts utilize Python multiprocessing for fast execution.
+
+### 1. Acquire & Preprocess Datasets
 ```bash
-python data/download_data.py
+python data/download_all_biomedical_data.py
 ```
 
-### 2. Run Classical Baselines
+### 2. Classical Machine Learning Baselines
 ```bash
 python experiments/run_classical_baselines.py
 ```
 
-### 3. Run Controlled 2-Qubit and 3-Qubit Experimental Suites (Parallelized)
+### 3. Controlled 2-Qubit & 3-Qubit Interaction Suites
 ```bash
 python experiments/run_controlled_experiments_parallel.py
 ```
 
-### 4. Audit & Verify iSWAP Performance
-```bash
-python experiments/debug_iswap.py
-```
-
-### 5. Run 4-Way Ablation Study (Dissecting Interleaving)
+### 4. Four-Way Allocation Ablation Study
 ```bash
 python experiments/run_4way_ablation.py
 ```
 
-### 6. Run Cross-Dataset Biomedical Generalization (WDBC, Parkinson's, Heart Disease, Coimbra)
+### 5. Multi-Dataset Biomedical Generalization (WDBC, Parkinson's, Heart Disease, Coimbra)
 ```bash
-python data/download_all_biomedical_data.py
 python experiments/run_multi_biomedical_benchmarks.py
 ```
 
-### 7. Generate Publication Figures
+### 6. Ranking Method Robustness Ablation (XGBoost, RF, Mutual Info, ANOVA)
+```bash
+python experiments/run_ranking_ablation.py
+```
+
+### 7. Quantitative Interaction Topology Analysis (Entropy & Network Metrics)
+```bash
+python experiments/analyze_topology_quantitatively.py
+```
+
+### 8. 20-Seed Replication Suite & Matched Paired Statistics
+```bash
+python experiments/run_20seed_verification.py
+```
+
+### 9. Generate Publication Figures (300 DPI)
 ```bash
 python experiments/generate_publication_figures.py
 ```
 
 ---
 
-## 📊 Summary of Primary Findings
+## Summary of Empirical Findings
 
-| Architecture / Model | Qubits | Allocation | Mean Test Accuracy (%) | Mean Sensitivity (Malignant Recall) | Mean Specificity (Benign) | Mean ROC-AUC |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Classical SVM (RBF Kernel)** | — | — | **97.72 ± 1.59%** | **95.24 ± 4.12%** | **99.17 ± 1.24%** | **0.9944 ± 0.0060** |
-| **Classical Logistic Regression** | — | — | 97.54 ± 1.69% | 94.76 ± 3.91% | 99.17 ± 0.76% | 0.9939 ± 0.0057 |
-| **Classical XGBoost** | — | — | 96.49 ± 1.39% | 94.76 ± 1.99% | 97.50 ± 2.06% | 0.9919 ± 0.0085 |
-| **3-Qubit CNOT-Star** | 3 | **IBIP** | **97.02 ± 0.48%** | **94.76 ± 1.99%** | **98.33 ± 1.24%** | **0.9962 ± 0.0006** |
-| 3-Qubit CNOT-Star | 3 | Sequential | 94.91 ± 1.14% | 90.00 ± 3.65% | 97.78 ± 1.24% | 0.9909 ± 0.0028 |
-| **2-Qubit $\sqrt{\text{SWAP}}$** | 2 | **IBIP** | 96.84 ± 2.20% | 94.29 ± 5.48% | 98.33 ± 1.52% | 0.9921 ± 0.0116 |
-| **2-Qubit SWAP** | 2 | **IBIP** | 96.84 ± 2.29% | 94.76 ± 5.68% | 98.06 ± 2.11% | 0.9919 ± 0.0091 |
-| **2-Qubit Unitary iSWAP (Corrected)**| 2 | **IBIP** | 95.96 ± 2.20% | 93.33 ± 5.16% | 97.50 ± 2.28% | 0.9900 ± 0.0091 |
+| Model / Architecture | Qubits | Strategy | Mean Test Accuracy (%) | Sensitivity (Recall) | Specificity | Mean ROC-AUC | Parameters |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Classical SVM (RBF Kernel)** | — | — | **97.72 ± 1.59%** | **95.24 ± 4.12%** | **99.17 ± 1.24%** | **0.9944 ± 0.0060** | ~150 SVs |
+| **Classical Logistic Regression** | — | — | 97.54 ± 1.69% | 94.76 ± 3.91% | 99.17 ± 0.76% | 0.9939 ± 0.0057 | 31 |
+| **Classical XGBoost** | — | — | 96.49 ± 1.39% | 94.76 ± 1.99% | 97.50 ± 2.06% | 0.9919 ± 0.0085 | 100 Trees |
+| **3-Qubit CNOT-Star (QIVC)** | 3 | **IBIP** | **97.02 ± 0.48%** | **94.76 ± 1.99%** | **98.33 ± 1.24%** | **0.9962 ± 0.0006** | **48** |
+| **2-Qubit $\sqrt{\text{SWAP}}$ (QIVC)** | 2 | **IBIP** | 96.49 ± 0.87% | 93.33 ± 2.84% | 98.33 ± 1.24% | 0.9960 ± 0.0012 | 34 |
+| **2-Qubit Unitary iSWAP (QIVC)** | 2 | **IBIP** | 95.61 ± 0.78% | 91.90 ± 3.48% | 97.78 ± 1.24% | 0.9921 ± 0.0018 | 34 |
+| **2-Qubit SWAP (QIVC)** | 2 | **IBIP** | 95.61 ± 0.78% | 91.90 ± 3.48% | 97.78 ± 1.24% | 0.9917 ± 0.0018 | 34 |
 
 ---
 
-## ⚖️ Citation
-If you utilize this codebase, data allocations, or methodology in your research, please cite:
+## Citation
+
 ```bibtex
 @article{kaila2026circuit,
   title={Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study},

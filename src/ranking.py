@@ -14,15 +14,12 @@ uneven divisibility, e.g. 13 features across 3 qubits -> 5, 4, 4).
 import numpy as np
 import xgboost as xgb
 from sklearn.inspection import permutation_importance
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import mutual_info_classif, f_classif
 
 def compute_xgboost_permutation_ranking(X_train, y_train, random_state=42, n_repeats=20):
     """
     Fits an XGBoost classifier on training data and computes permutation importance.
-    Returns:
-        ranked_indices (np.ndarray): Indices of features sorted by descending importance.
-        importances_mean (np.ndarray): Mean importance scores for all features.
-        importances_std (np.ndarray): Std dev of importance scores.
-        xgb_model: The fitted XGBoost model.
     """
     xgb_model = xgb.XGBClassifier(
         n_estimators=100,
@@ -47,6 +44,44 @@ def compute_xgboost_permutation_ranking(X_train, y_train, random_state=42, n_rep
     
     ranked_indices = np.argsort(perm.importances_mean)[::-1]
     return ranked_indices, perm.importances_mean, perm.importances_std, xgb_model
+
+def compute_feature_ranking(X_train, y_train, method="xgboost", random_state=42, n_repeats=20):
+    """
+    Computes feature importance ranking using various statistical and ML criteria.
+    
+    Parameters:
+        X_train (np.ndarray): Scaled training features.
+        y_train (np.ndarray): Training labels.
+        method (str): 'xgboost', 'random_forest', 'mutual_info', or 'anova_f'.
+        random_state (int): Seed for stochastic methods.
+        n_repeats (int): Number of permutations for permutation importance.
+        
+    Returns:
+        ranked_indices (np.ndarray): Feature indices in descending order of importance.
+        scores (np.ndarray): Computed importance/relevance scores for each feature.
+    """
+    method = method.lower()
+    if method in ["xgboost", "xgb"]:
+        ranked, scores, _, _ = compute_xgboost_permutation_ranking(X_train, y_train, random_state=random_state, n_repeats=n_repeats)
+        return ranked, scores
+    elif method in ["random_forest", "rf"]:
+        rf = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=random_state, n_jobs=-1)
+        rf.fit(X_train, y_train)
+        perm = permutation_importance(rf, X_train, y_train, n_repeats=n_repeats, random_state=random_state, n_jobs=-1)
+        scores = perm.importances_mean
+        ranked = np.argsort(scores)[::-1]
+        return ranked, scores
+    elif method in ["mutual_info", "mi"]:
+        scores = mutual_info_classif(X_train, y_train, random_state=random_state)
+        ranked = np.argsort(scores)[::-1]
+        return ranked, scores
+    elif method in ["anova_f", "f_test", "anova"]:
+        f_vals, _ = f_classif(X_train, y_train)
+        f_vals = np.nan_to_num(f_vals, nan=0.0)
+        ranked = np.argsort(f_vals)[::-1]
+        return ranked, f_vals
+    else:
+        raise ValueError(f"Unknown ranking method: '{method}'. Supported: 'xgboost', 'random_forest', 'mutual_info', 'anova_f'")
 
 def get_feature_allocation(n_features=30, n_qubits=3, method="ibip", ranked_indices=None, seed=42):
     """

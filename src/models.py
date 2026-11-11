@@ -230,6 +230,49 @@ class QuantumInspiredClassifier:
         prob = sigmoid(logit)
         return prob, z
 
+    def get_statevector(self, x):
+        """
+        Returns full pure statevector |psi> of dimension 2^n after encoding, interaction, and variational layers.
+        """
+        phi = self.compute_phi(x)
+        s = np.zeros(2 ** self.n_qubits, dtype=complex)
+        s[0] = 1.0 # |0...0>
+        
+        if self.n_qubits == 2:
+            U0 = Rz(self.enc[0]) @ Ry(phi[0])
+            U1 = Rz(self.enc[1]) @ Ry(phi[1])
+            s = (U0 @ s.reshape(2, 2)).reshape(2, 2)
+            s = (s @ U1.T).reshape(2, 2)
+            vec = s.ravel()
+            for U in self.interaction_matrices:
+                vec = U @ vec
+            s = vec.reshape(2, 2)
+            V0 = Rz(self.var[0]) @ Ry(self.var[0])
+            V1 = Rz(self.var[1]) @ Ry(self.var[1])
+            s = (V0 @ s).reshape(2, 2)
+            s = (s @ V1.T).reshape(2, 2)
+            return s.ravel()
+        elif self.n_qubits == 3:
+            U0 = Rz(self.enc[0]) @ Ry(phi[0])
+            U1 = Rz(self.enc[1]) @ Ry(phi[1])
+            U2 = Rz(self.enc[2]) @ Ry(phi[2])
+            s = (U0 @ s.reshape(2, 4)).reshape(2, 2, 2)
+            s = (U1 @ s.transpose(1, 0, 2).reshape(2, 4)).reshape(2, 2, 2).transpose(1, 0, 2)
+            s = (s.reshape(4, 2) @ U2.T).reshape(2, 2, 2)
+            vec = s.ravel()
+            for U in self.interaction_matrices:
+                vec = U @ vec
+            s = vec.reshape(2, 2, 2)
+            V0 = Rz(self.var[0]) @ Ry(self.var[0])
+            V1 = Rz(self.var[1]) @ Ry(self.var[1])
+            V2 = Rz(self.var[2]) @ Ry(self.var[2])
+            s = (V0 @ s.reshape(2, 4)).reshape(2, 2, 2)
+            s = (V1 @ s.transpose(1, 0, 2).reshape(2, 4)).reshape(2, 2, 2).transpose(1, 0, 2)
+            s = (s.reshape(4, 2) @ V2.T).reshape(2, 2, 2)
+            return s.ravel()
+        else:
+            raise ValueError(f"Unsupported qubit count: {self.n_qubits}")
+
     def fit_sample(self, x, y, fast_grad=True):
         """
         Online SuperGD step with PSR and backprop.

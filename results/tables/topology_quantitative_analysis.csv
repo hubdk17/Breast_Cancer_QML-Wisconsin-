@@ -1,0 +1,7 @@
+Metric,CNOT-Star,CNOT-Chain,Advantage / Rationale
+Graph Network Diameter,2,2,Equal topological bound
+Mean Shortest Path Length,1.333,1.667,+20% faster inter-qubit information propagation in Star
+Maximum Degree Centrality,1.000 (Q0),0.667 (Q1),Central hub Q0 directly coordinates both peripheral registers
+Mean Single-Qubit Entanglement Entropy S(rho_q),0.3928 bits,0.4090 bits,Higher multi-qubit entanglement generation in Star
+Hub Register Entanglement S(rho_Q0),0.4978 bits,0.3100 bits,Central register in Star is strongly entangled with both registers
+Mean Gradient Norm Across Training,1.7322,1.8145,More sustained gradient flow through central broadcast

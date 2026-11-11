@@ -240,23 +240,87 @@ As detailed in our response to Editorial Comment 2, we have replaced Welch's $t$
 
 # Part IV: Response to Reviewer 3
 
-**Reviewer 3, Comment 1:**  
-*The 2-qubit and 3-qubit comparisons are confounded with feature group sizes (15 vs 10). Replicate both at the same qubit count or treat them as separate.*
+We thank Reviewer 3 for their rigorous, constructive, and comprehensive assessment of our manuscript. Below, we address each point, recommendation, and observation raised in Reviewer 3's report in full detail:
+
+### 1. Downplaying Claims of Superiority and Contextualizing Against Classical Baselines (SVM 98.2%)
+> *Reviewer Comment:*  
+> *“The impact is minimal because a simple classical baseline (SVM, 98.2%) surpasses any conceivable quantum-inspired architecture (the best achieves 97.02-97.37%). The stated contribution should be downplayed; the current conclusions imply that the method is superior, while the data show the contrary in comparison to the classical baseline... The Discussion overemphasizes IBIP's benefits without truthfully acknowledging that the traditional SVM baseline remains superior; this merits an explicit paragraph in the Discussion itself, rather than a quick mention in Limitations.”*
 
 **Author Response:**  
-We have completely separated the 2-qubit and 3-qubit evaluations into distinct experimental suites as requested, and evaluated all topologies under identical feature allocation and replication depths (see Response to Editorial Comment 1).
+We completely agree with Reviewer 3 and have thoroughly revised our framing across the entire manuscript:
+1. **Downplaying Superiority Claims:** We have removed all statements implying that the proposed quantum-inspired variational classifier (QIVC) outperforms mature classical machine learning libraries on tabular datasets. In the Abstract, Introduction, and Conclusions, we explicitly state that classical Support Vector Machines (RBF kernel: $97.72\% \pm 1.59\%$, Linear kernel: $97.02\% \pm 2.37\%$) and Logistic Regression ($97.54\% \pm 1.69\%$) establish the top performance benchmarks.
+2. **Dedicated Discussion Paragraph (Section 4.4):** Rather than relegating this to a brief footnote, we added a dedicated subsection (*Section 4.4: Contextualizing Quantum-Inspired Models Against Classical Baselines*) in the Discussion explicitly highlighting:
+   - Classical SVM achieves higher accuracy than the best QIVC configuration ($97.72\%$ vs. $97.02\%$).
+   - The scientific value of QIVCs is not to replace mature classical classifiers on moderate-dimensional tabular benchmarks, but rather to investigate how **quantum-inspired inductive biases**, **trigonometric Hilbert-space mappings**, and **register interaction topologies** behave under low-qubit resource constraints.
+   - We also provide practical justifications for exploring QIVCs: (i) *Extreme representation compactness* (QIVC uses only 48 scalar parameters total compared to thousands of parameters stored across 120–150 support vectors in RBF-SVM); (ii) *Algorithmic precursor value* (the exact same parameterized statevector equations execute natively on physical NISQ quantum hardware); and (iii) *Non-linear bounded trigonometric activations* without exploding gradients.
 
-**Reviewer 3, Comment 2:**  
-*The iSWAP result (58.8%) is likely a bug. Phase gates shouldn't randomly collapse performance.*
+---
+
+### 2. Clarifying "Quantum-State Simulation" versus "Quantum-Inspired" Notation
+> *Reviewer Comment:*  
+> *“The authors need to clarify whether this incorporates true quantum-state simulation (complex amplitudes, Hilbert space) or just 'quantum-inspired' notation layered atop classical computing (φq = π·tanh(...) appears to be an ordinary classical transformation). Without this clarity, the 'quantum' framing risks becoming an overstatement.”*
 
 **Author Response:**  
-Reviewer 3 was entirely perceptive and accurate. As detailed in Response to Editorial Comment 5, our audit identified an implementation artifact in early prototypes where complex phases were dropped during state coercion. Correct unitary simulation of iSWAP achieves 95.61%–96.49% accuracy and 0.9921–0.9940 ROC-AUC, fully consistent with other exchange gates. We have corrected this throughout the paper.
+We thank Reviewer 3 for requesting this fundamental clarification. We have rewritten Section 2.4, the Title, and Abstract to delineate the classical versus quantum components with complete mathematical precision:
+- **Classical Feature Compression Layer:** Input subvectors $x_q$ undergo a classical non-linear projection $\phi_q = \pi \tanh(W_q^T x_q / \sqrt{|x_q|}) \in [-\pi, \pi]$ to compute valid gate rotation angles.
+- **Exact Statevector Hilbert-Space Simulation:** The quantum circuit block is an **exact classical numerical simulation of statevectors in complex Hilbert space** $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ (dimension $2^n$). It tracks complex probability amplitudes $\psi \in \mathbb{C}^{2^n}$ evolving under unitary matrix operators ($R_y, R_z$, CNOT, SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP) that strictly preserve normalization ($\|\psi\| = 1$).
+- **Classical Readout Layer:** Expectation values of Pauli-$Z$ operators $\langle Z_q \rangle = \psi^\dagger Z_q \psi \in [-1, 1]$ are linearly mapped to class probabilities via classical sigmoid activation.
+- **Gradient Optimization:** Variational circuit rotations are updated via the analytical **Parameter Shift Rule (PSR)**, while projection weights $W_q$ are trained by applying the chain rule through the non-linear hyperbolic tangent projection.
+We have revised the title to *"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"* and eliminated any ambiguous hardware claims.
 
-**Reviewer 3, Comment 3:**  
-*The paper is not a "topological study" in the mathematical sense. The title should be revised.*
+---
+
+### 3. Re-Verification and Resolution of the Suspicious iSWAP Anomaly
+> *Reviewer Comment:*  
+> *“The dramatic drop in iSWAP performance (58.80% accuracy, ROC-AUC 0.564, near random guessing) is highly suspicious and could point to an implementation bug rather than a genuine finding; this should be verified/debugged before being presented as a scientific conclusion ('phase-based interactions degrade performance').”*
 
 **Author Response:**  
-We have updated the title to: *"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"*, accurately reflecting that the work investigates circuit gate connection graphs rather than topological data analysis (TDA).
+**Reviewer 3 was 100% correct.** Following the reviewer's insight, we conducted a rigorous code audit in `experiments/debug_iswap.py`.
+- **The Bug Identified:** In our early prototype code, the two-qubit gate was subjected to an inadvertent real-value casting (`np.real()`), which truncated the complex imaginary phase factor ($1j$) in the canonical iSWAP matrix:
+  $$\text{iSWAP} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & i & 0 \\ 0 & i & 0 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+  Discarding the imaginary phase broke unitarity ($\det(U) \neq 1$), which corrupted the statevector norm, collapsed parameter-shift gradients, and caused the network to default to majority-class prediction (58.80% accuracy).
+- **Correct Unitary Results:** Under mathematically rigorous complex unitary evolution:
+  - **Unitary iSWAP achieves $95.61\% \pm 0.78\%$ accuracy and $0.9921 \pm 0.0018$ ROC-AUC!**
+  - This matches standard SWAP ($95.61\% \pm 0.78\%$, AUC $0.9917$) and $\sqrt{\text{SWAP}}$ ($96.49\% \pm 0.87\%$, AUC $0.9960$).
+- **Correction:** We have completely retracted the erroneous claim that "phase-based interactions degrade performance." Section 3.1, Section 4.3, Table 2, and Figure 3 have been corrected.
+
+---
+
+### 4. Multi-Seed Statistical Rigor & Sample Size (Tables 2–3, Figure 3 Error Bars, 20-Seed Replication)
+> *Reviewer Comment:*  
+> *“Table 2 (gate-level: SWAP/√SWAP/iSWAP) appears to be single-run only, not duplicated across seeds like CNOT-Star, indicating variance in rigor between experiments... Include error bars/CIs in Figure 3 and Tables 2-3... The WDBC dataset is quite tiny (569 samples), and the authors have already admitted that using n=5 seeds for the significance test (Welch's t-test, p=0.011) is underpowered.”*
+
+**Author Response:**  
+We have completely overhauled our experimental replication and statistical testing protocols:
+1. **Multi-Seed Replication for All Gates:** In Table 2, every single gate (SWAP, $\sqrt{\text{SWAP}}$, Unitary iSWAP, CNOT, Independent) is now evaluated across 5 matched random seeds ($0, 42, 123, 777, 2025$) under both IBIP and Sequential allocations, reporting 5-Seed Mean $\pm$ SD and 95% Confidence Intervals.
+2. **Error Bars in Figures:** Figure 3 now features explicit standard error / 95% CI error bars for all gate-level comparisons.
+3. **Appropriate Matched Statistical Tests:** We eliminated independent Welch $t$-tests. We now report paired Student's $t$-tests, non-parametric Wilcoxon signed-rank tests, Cohen's $d_z$ standardized effect sizes, and 95% CIs on matched per-seed differences.
+4. **Expanded 20-Seed Replication Suite:** To address the sample size concern ($n=5$), we executed an expanded **20-seed replication study** (seeds 0 through 19) comparing IBIP CNOT-Star vs. Sequential CNOT-Star (`cnot_star_vs_seq_20seeds.csv`):
+   - Mean Accuracy: IBIP = $96.62\% \pm 1.63\%$, Sequential = $97.68\% \pm 1.15\%$.
+   - Paired Student's $t$-test: $t(19) = -2.734$, $p = 0.0132$, Cohen's $d_z = -0.611$.
+5. **Cross-Validation Across Independent Patients:** We complemented seed-level tests with 5-fold stratified cross-validation (Table 6), where IBIP CNOT-Star achieved $95.26\% \pm 1.82\%$ accuracy across independent patient partitions without fold collapse.
+
+---
+
+### 5. Softening Previous QML Literature Comparison (Table 7) into Qualitative Contextualization
+> *Reviewer Comment:*  
+> *“The comparison with previous QML studies (Table 7) is not apples-to-apples (because of differences in data splits, architectures, and assessment processes); this should be softened into a qualitative contextualization rather than a direct accuracy comparison table.”*
+
+**Author Response:**  
+We fully agree with Reviewer 3. In the revised manuscript:
+- Old Table 7 was removed and replaced with a rigorous **Classical Baseline Comparison Table** (Table 7) evaluating SVM, XGBoost, Ridge, Logistic Regression, and Random Forest under identical data splits, identical preprocessing, and identical cross-validation folds.
+- In Section 4.7, we added a **Qualitative Architectural Contextualization Table (Table 13)** comparing the proposed work with Xiang et al. (QCNN) and Pagadala et al. (QSVC). We explicitly state in the text that differing train/test split ratios (e.g. 70:30 vs 80:20), divergent feature pre-reduction protocols (such as unsupervised PCA dimensionality reduction), and single-run evaluations prevent strict like-for-like numerical rankings.
+
+---
+
+### 6. Addressing the Four Core Barriers to Acceptance
+Reviewer 3 summarized four core barriers preventing acceptance of the original manuscript. We have resolved every single one:
+1. **Barrier 1 (Outperforming Classical Baseline):** The paper no longer claims superiority over classical SVM ($97.72\%$). The contribution is explicitly framed around feature allocation mechanisms (IBIP) and interaction topologies within low-qubit quantum-inspired architectures (Section 4.4).
+2. **Barrier 2 (iSWAP Bug):** Verified, debugged, and corrected. Unitary iSWAP achieves $95.61\%$, matching SWAP (Section 3.1 & Section 4.3).
+3. **Barrier 3 (Inconsistent Statistical Rigor):** Harmonized across all experiments. All gates, topologies, ablations, and benchmarks now report multi-seed Mean $\pm$ SD, 95% CIs, and paired statistical contrasts (Tables 2, 3, 5, 7, 8, 9, 10, 11).
+4. **Barrier 4 (Clarification of "Quantum"):** Explicitly defined as a hybrid classical statevector simulation in complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ (Section 2.4).
+
+---
 
 ---
 

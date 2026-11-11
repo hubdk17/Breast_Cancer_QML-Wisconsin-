@@ -62,3 +62,4 @@ if __name__ == "__main__":
     prepare_parkinsons()
     prepare_heart_disease()
     prepare_coimbra()
+
