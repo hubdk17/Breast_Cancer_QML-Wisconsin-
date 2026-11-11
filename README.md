@@ -110,7 +110,18 @@ python experiments/run_controlled_experiments_parallel.py
 python experiments/debug_iswap.py
 ```
 
-### 5. Generate Publication Figures
+### 5. Run 4-Way Ablation Study (Dissecting Interleaving)
+```bash
+python experiments/run_4way_ablation.py
+```
+
+### 6. Run Cross-Dataset Biomedical Generalization (WDBC, Parkinson's, Heart Disease, Coimbra)
+```bash
+python data/download_all_biomedical_data.py
+python experiments/run_multi_biomedical_benchmarks.py
+```
+
+### 7. Generate Publication Figures
 ```bash
 python experiments/generate_publication_figures.py
 ```
@@ -143,3 +154,4 @@ If you utilize this codebase, data allocations, or methodology in your research,
   doi={10.20935/AcadQuantXXXX}
 }
 ```
+

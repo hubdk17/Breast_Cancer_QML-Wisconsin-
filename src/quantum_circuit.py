@@ -108,3 +108,4 @@ def get_z_operator(qubit, n_qubits):
 def expectation_value(state, operator):
     """Computes <psi| operator |psi>."""
     return np.real(np.vdot(state, operator @ state))
+

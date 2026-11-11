@@ -1,0 +1,7 @@
+,Accuracy,Accuracy,Sensitivity,Sensitivity,Specificity,Specificity,Precision,Precision,F1_Score,F1_Score,ROC_AUC,ROC_AUC
+,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+Strategy_Label,,,,,,,,,,,,
+IBIP (Proposed Interleaved),95.2632,2.9487,93.3333,4.5799,96.3889,3.6218,94.0188,5.4769,93.5806,3.9434,0.9909,0.0113
+Importance-Blocked (No Interleaving),92.807,2.5119,89.5238,5.4814,94.7222,1.5215,90.8136,2.5763,90.1137,3.6673,0.9793,0.0121
+Random Allocation,94.7368,2.2364,91.4286,3.1944,96.6667,2.7074,94.2602,4.4958,92.7724,3.055,0.9896,0.0088
+Sequential Allocation,97.3684,2.2364,95.2381,6.9416,98.6111,1.701,97.7061,2.7837,96.2932,3.3276,0.9929,0.0097

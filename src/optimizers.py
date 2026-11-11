@@ -48,3 +48,4 @@ class AdamOptimizer:
         m_hat = self.m[key] / (1 - self.beta1 ** self.t)
         v_hat = self.v[key] / (1 - self.beta2 ** self.t)
         return param - self.lr * m_hat / (np.sqrt(v_hat) + self.eps)
+

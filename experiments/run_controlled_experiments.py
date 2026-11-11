@@ -220,3 +220,4 @@ if __name__ == "__main__":
     topologies_3q = ["cnot_star", "cnot_chain", "cnot_ring", "swap_chain", "swap_star", "full_mesh", "none"]
     run_suite(n_qubits=3, topologies=topologies_3q, suite_name="Three_Qubit_Suite")
     run_cross_validation_suite(n_qubits=3, topologies=topologies_3q, suite_name="Three_Qubit_Suite")
+

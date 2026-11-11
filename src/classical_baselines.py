@@ -87,3 +87,4 @@ def evaluate_predictions(y_true, y_pred, y_prob=None, positive_label=0):
         "confusion_matrix": cm,
         "tn": tn, "fp": fp, "fn": fn, "tp": tp
     }
+

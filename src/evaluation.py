@@ -90,3 +90,4 @@ def compute_paired_statistics(scores_a, scores_b, name_a="IBIP", name_b="Sequent
         "p_welch": float(p_welch),
         "differences": diff.tolist()
     }
+
