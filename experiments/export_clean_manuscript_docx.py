@@ -260,3 +260,4 @@ if __name__ == "__main__":
     md_in = os.path.join(base_dir, "paper", "manuscript_clean_submission.md")
     docx_out = os.path.join(base_dir, "paper", "manuscript_clean_submission.docx")
     export_clean_manuscript(md_in, docx_out)
+
