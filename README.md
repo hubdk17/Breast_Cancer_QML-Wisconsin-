@@ -150,13 +150,6 @@ python experiments/generate_publication_figures.py
 
 ## Citation
 
-```bibtex
-@article{kaila2026circuit,
-  title={Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study},
-  author={Kaila, Daksh and Aggarwal, Monika and Muhuri, Samya},
-  journal={Academia Quantum},
-  year={2026},
-  doi={10.20935/AcadQuantXXXX}
-}
-```
+https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git
+
 
