@@ -171,11 +171,8 @@ def plot_figure8_ablation(summary):
         ax.annotate(f"{h:.2f}%", xy=(bar.get_x() + bar.get_width() / 2, h),
                     xytext=(0, 6), textcoords="offset points", ha="center", va="bottom", fontsize=10, fontweight="bold")
                     
-    # Annotation bracket highlighting interleaving effect
-    ax.annotate("", xy=(2, 97.5), xytext=(3, 97.5),
-                arrowprops=dict(arrowstyle="<->", color="#1e293b", lw=1.5))
-    ax.text(2.5, 97.8, "Interleaving Effect\n(+1.75% Gain, p < 0.05)", ha="center", va="bottom",
-            fontsize=9.5, fontweight="bold", color="#1d4ed8")
+    # No effect annotation is drawn: paired statistics are reported in
+    # results/tables/ablation_4way_paired_stats.csv (IBIP vs Importance-Blocked: +2.46 points, p = 0.108).
             
     plt.tight_layout()
     fig.savefig(os.path.join(OUTPUT_FIGS, "figure8_4way_ablation.png"))
