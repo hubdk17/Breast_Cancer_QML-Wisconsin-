@@ -43,11 +43,8 @@ def plot_figure3_gate_comparison():
         seq_accs = [df_sum.loc[(t, "Sequential")][("Accuracy", "mean")] for t in topologies]
         seq_stds = [df_sum.loc[(t, "Sequential")][("Accuracy", "std")] for t in topologies]
     else:
-        labels = ["SWAP", "√SWAP", "iSWAP (Unitary)", "CNOT (0→1)", "Independent"]
-        ibip_accs = [96.84, 96.84, 95.96, 96.14, 96.84]
-        ibip_stds = [2.29, 2.20, 2.20, 2.02, 2.11]
-        seq_accs = [95.44, 96.49, 94.56, 97.02, 94.56]
-        seq_stds = [1.57, 1.75, 1.44, 1.00, 1.44]
+        # Figures are drawn only from result tables; run the experiment scripts first.
+        raise FileNotFoundError(f"{summary_path} not found. Run experiments/run_controlled_experiments_parallel.py first.")
 
     fig, ax = plt.subplots(figsize=(9, 5), dpi=300)
     x = np.arange(len(labels))

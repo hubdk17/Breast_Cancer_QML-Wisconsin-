@@ -1,155 +1,125 @@
-# Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study
+# Importance-Balanced Interleaved Feature Projection for Quantum-Inspired Variational Classifiers
 
-This repository provides the complete, reproducible Python implementation for the manuscript:
-> **"Circuit Interaction Topologies and Importance-Balanced Feature Allocation for Quantum-Inspired Variational Classifiers: A Breast Cancer Diagnosis Study"**
-> Currently submitted to Academia Quantum
+Reproducible code and results for the manuscript:
 
-Repository URL: `https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git`
+> **"Importance-Balanced Interleaved Feature Projection for Quantum-Inspired Variational Classifiers: A Controlled Study of Feature Allocation and Interaction Topology in Breast Cancer Diagnosis"**
+> Daksh Kaila, Monika Aggarwal, Samya Muhuri. Revised submission to *Academia Quantum*.
+
+The revised manuscript is in [`paper/manuscript_revised.pdf`](paper/manuscript_revised.pdf) (Word version: `paper/manuscript_revised.docx`). Every number and figure in it is generated from the CSV files in `results/tables/` by the scripts in `experiments/`.
 
 ---
 
 ## Overview
 
-Quantum-inspired variational classifiers (QIVCs) simulate parameterized quantum circuits on classical computing architectures, leveraging unitary statevector rotations, multi-qubit entangling topologies, and Pauli expectation measurements. This codebase provides a modular, leakage-free benchmark investigating:
-1. **Importance-Balanced Interleaved Projection (IBIP):** Interleaves high-leverage and fine-grained diagnostic features across qubit registers to prevent register starvation and uninformative entanglement.
-2. **Controlled Circuit Interaction Topologies:** Evaluates two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit connection graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) in unconfounded suites.
-3. **Rigorous Benchmarking & Clinical Metrics:** Benchmarks QIVCs against 6 classical machine learning baselines (SVM RBF/Linear, XGBoost, Ridge, Logistic Regression, Random Forest) across 5-seed, 20-seed, and 5-fold cross-validation evaluations, reporting Accuracy, Sensitivity (Malignant Recall), Specificity (Benign Recall), Precision, F1-Score, ROC-AUC, and full confusion matrices.
-4. **Generalization Beyond WDBC:** Evaluates IBIP across four distinct biomedical benchmarks: Wisconsin Diagnostic Breast Cancer (WDBC), Parkinson's Disease (UCI 174), Cleveland Heart Disease (UCI 45), and Breast Cancer Coimbra (UCI 451).
+Quantum-inspired variational classifiers (QIVCs) compress many continuous features into a few simulated qubit registers. This repository studies two design choices under matched seeds, splits and paired statistics:
+
+1. **Feature allocation:** which features feed which qubit. Four strategies are compared:
+   - **Sequential:** original column order.
+   - **Random:** random equal-sized groups.
+   - **Importance-Blocked:** top-ranked features packed together on the first qubit.
+   - **IBIP (Importance-Balanced Interleaved Projection):** ranked features dealt round-robin across qubits.
+2. **Interaction topology:**
+   - Two-qubit gates: SWAP, √SWAP, iSWAP, CNOT, Independent.
+   - Three-qubit graphs: CNOT-Star, CNOT-Chain, CNOT-Ring, Full-Mesh, SWAP-Star, SWAP-Chain, Independent.
+
+The model applies a classical non-linear projection φ_q = π·tanh(W_qᵀx_q/√d_q), then exact complex statevector simulation (encoding R_y(φ_q)R_z(e_q), the interaction layer, variational R_y(v_q)R_z(v_q)), Pauli-Z expectations and a linear–sigmoid readout. It is trained with BCE loss, shift-based gradient estimates and Superpositional Gradient Descent. The 3-qubit model has 40 trainable parameters. At this scale the model is classically computable; no quantum advantage is claimed.
 
 ---
 
-## Directory Structure
+## Key results (WDBC, from `results/tables/`)
+
+**Primary comparison: 3-qubit CNOT-Star, IBIP vs Sequential**
+
+| Protocol | IBIP accuracy (%) | Sequential accuracy (%) | Paired difference (IBIP − Seq) |
+| :--- | :---: | :---: | :--- |
+| 5 seeds | 95.26 ± 2.02 | 97.37 ± 2.24 | −2.11, p = 0.009 |
+| 5-fold CV | 96.14 ± 2.28 | 97.54 ± 1.69 | — |
+| 20 seeds (0–19) | 96.62 ± 1.69 | 97.68 ± 1.15 | −1.05 [−1.86, −0.25], p = 0.013; ROC-AUC difference n.s. (p = 0.455) |
+
+On WDBC, sequential allocation, which puts the mean, standard-error and worst-value descriptors on separate qubits, is more accurate than IBIP.
+
+**Four-way allocation ablation (CNOT-Star, 5 seeds)**
+
+| Strategy | Sequential | Random | Importance-Blocked | IBIP |
+| :--- | :---: | :---: | :---: | :---: |
+| Accuracy (%) | 97.37 ± 2.24 | 94.74 ± 2.24 | 92.81 ± 2.51 | 95.26 ± 2.95 |
+
+IBIP beats importance-blocking on WDBC (+2.46, p = 0.108), Parkinson's disease (+1.03) and heart disease (+8.20, p = 0.009). It beats sequential allocation on Parkinson's (+5.64, p = 0.063) but not on WDBC or heart disease.
+
+**Topologies.**
+- Under IBIP, no entangling topology outperforms the uncoupled circuit (Independent 95.44%).
+- CNOT-Ring degrades accuracy to about 81%.
+- With exact complex simulation, iSWAP performs like the other exchange gates (95.96%).
+
+**Classical baselines (same splits).**
+- RBF-SVM 97.72 ± 1.59% and logistic regression 97.54 ± 1.69%.
+- The best QIVC (Sequential CNOT-Chain, 97.72 ± 1.33%) matches but does not exceed the SVM.
+
+---
+
+## Directory structure
 
 ```
-BreastCancer_QML/
-├── data/
-│   ├── download_all_biomedical_data.py          # Downloads & prepares WDBC, Parkinson's, Heart Disease, Coimbra
-│   ├── wdbc.csv                                 # 569 samples, 30 cytological features (breast oncology)
-│   ├── parkinsons.csv                           # 195 samples, 22 acoustic features (neurology)
-│   ├── heart_disease.csv                        # 303 samples, 13 cardiovascular features (cardiology)
-│   └── coimbra.csv                              # 116 samples, 9 serum biomarker features (metabolism)
-├── src/
-│   ├── __init__.py
-│   ├── dataset.py                               # Preprocessing, train/test splitting, stratified K-fold
-│   ├── ranking.py                               # Feature rankers (XGBoost, RF, Mutual Info, ANOVA) & IBIP allocations
-│   ├── quantum_circuit.py                       # Exact complex statevector simulator & unitary gate matrices
-│   ├── models.py                                # Fast tensor-contraction QIVC simulator with PSR and SuperGD
-│   ├── optimizers.py                            # Superpositional Gradient Descent (SuperGD), SGD, Adam
-│   ├── classical_baselines.py                   # Standardized SVM, XGBoost, Ridge, Logistic Regression, RF
-│   └── evaluation.py                            # Paired Student's t-test, Wilcoxon signed-rank, Cohen's d_z, 95% CIs
-├── experiments/
-│   ├── reproduce_original_paper.py              # Reproduction of original manuscript exploratory tables
-│   ├── debug_iswap.py                           # Audit & verification of unitary iSWAP complex matrix
-│   ├── run_classical_baselines.py               # Evaluation of 6 classical models (seeds & 5-fold CV)
-│   ├── run_controlled_experiments_parallel.py   # Controlled 2Q and 3Q suites under IBIP & Sequential
-│   ├── run_4way_ablation.py                     # 4-way ablation (Sequential, Random, Importance-Blocked, IBIP)
-│   ├── run_multi_biomedical_benchmarks.py       # Cross-dataset generalization across all 4 biomedical datasets
-│   ├── run_ranking_ablation.py                  # Evaluation of 4 distinct ranking criteria across 10 seeds
-│   ├── analyze_topology_quantitatively.py       # Von Neumann entanglement entropy & graph distance analysis
-│   ├── run_20seed_verification.py               # Expanded 20-seed replication and paired statistics
-│   └── generate_publication_figures.py          # High-resolution (300 DPI) publication figure generation
-├── results/
-│   ├── tables/                                  # CSV results tables, paired statistical contrasts, CV summaries
-│   └── figures/                                 # Publication-grade figures (PNG, 300 DPI)
-├── paper/
-│   ├── manuscript_marked_revision.md            # Complete revised manuscript with all revision markings
-│   └── response_to_reviewers.md                 # Detailed point-by-point response to editor and reviewers
-├── requirements.txt                             # Python dependencies
-└── README.md                                    # Documentation and reproduction guide
+data/                     WDBC, Parkinson's, Cleveland heart disease, Coimbra (+ download scripts)
+src/
+  dataset.py              preprocessing, stratified splits and folds (scaler fitted on training data only)
+  ranking.py              feature rankers and the four allocation strategies
+  quantum_circuit.py      gate matrices and statevector utilities
+  models.py               QIVC: projection, statevector simulation, shift-based gradients, SuperGD
+  optimizers.py           SuperGD, SGD, Adam
+  classical_baselines.py  SVM (RBF/linear), logistic regression, XGBoost, random forest, ridge
+  evaluation.py           paired t-test, Wilcoxon, Cohen's d_z, 95% CI
+experiments/
+  run_controlled_experiments_parallel.py   2- and 3-qubit suites, IBIP vs Sequential (5 seeds + 5-fold CV)
+  run_20seed_verification.py               20-seed replication of the primary comparison
+  run_4way_ablation.py                     Sequential / Random / Importance-Blocked / IBIP
+  run_multi_biomedical_benchmarks.py       allocation strategies on the external datasets
+  run_ranking_ablation.py                  four ranking criteria (10 seeds)
+  run_classical_baselines.py               six classical models (5 seeds + 5-fold CV)
+  run_threshold_analysis.py                operating-threshold analysis (Table 8)
+  analyze_topology_quantitatively.py       path length, entanglement entropy, gradient norms
+  debug_iswap.py                           diagnostic for the version-1 iSWAP error
+  make_revision_figures.py                 Figures 1, 3, 4, 5 of the revised manuscript
+  generate_publication_figures.py          supplementary figures (ROC, confusion matrices)
+  reproduce_original_paper.py              reproduction of version-1 exploratory tables
+results/tables/           all per-seed, per-fold, summary and paired-statistics CSVs
+results/figures/revision/ figures used in the revised manuscript
+paper/                    revised manuscript (.docx, .pdf)
 ```
 
 ---
 
-## Installation & Environment Setup
+## Reproducing the results
 
-Environment tested with **Python 3.11.9**:
+Tested with Python 3.11.
 
 ```bash
-# Clone the repository
 git clone https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git
 cd Breast_Cancer_QML-Wisconsin-
-
-# Create and activate virtual environment
-python -m venv venv
-
-# Windows:
-.\venv\Scripts\activate
-# Linux / macOS:
-source venv/bin/activate
-
-# Install dependencies
+python -m venv venv && source venv/bin/activate   # Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
-```
 
----
-
-## Reproducing Results
-
-All experimental scripts utilize Python multiprocessing for fast execution.
-
-### 1. Acquire & Preprocess Datasets
-```bash
 python data/download_all_biomedical_data.py
-```
-
-### 2. Classical Machine Learning Baselines
-```bash
 python experiments/run_classical_baselines.py
-```
-
-### 3. Controlled 2-Qubit & 3-Qubit Interaction Suites
-```bash
 python experiments/run_controlled_experiments_parallel.py
-```
-
-### 4. Four-Way Allocation Ablation Study
-```bash
-python experiments/run_4way_ablation.py
-```
-
-### 5. Multi-Dataset Biomedical Generalization (WDBC, Parkinson's, Heart Disease, Coimbra)
-```bash
-python experiments/run_multi_biomedical_benchmarks.py
-```
-
-### 6. Ranking Method Robustness Ablation (XGBoost, RF, Mutual Info, ANOVA)
-```bash
-python experiments/run_ranking_ablation.py
-```
-
-### 7. Quantitative Interaction Topology Analysis (Entropy & Network Metrics)
-```bash
-python experiments/analyze_topology_quantitatively.py
-```
-
-### 8. 20-Seed Replication Suite & Matched Paired Statistics
-```bash
 python experiments/run_20seed_verification.py
+python experiments/run_4way_ablation.py
+python experiments/run_multi_biomedical_benchmarks.py
+python experiments/run_ranking_ablation.py
+python experiments/run_threshold_analysis.py
+python experiments/analyze_topology_quantitatively.py
+python experiments/make_revision_figures.py
 ```
 
-### 9. Generate Publication Figures (300 DPI)
-```bash
-python experiments/generate_publication_figures.py
-```
+Permutation importance is stochastic, so IBIP per-seed accuracies can vary slightly between independently ranked runs. Sequential allocation does not depend on a ranking and reproduces exactly.
 
 ---
 
-## Summary of Empirical Findings
+## Notes on version 1
 
-| Model / Architecture | Qubits | Strategy | Mean Test Accuracy (%) | Sensitivity (Recall) | Specificity | Mean ROC-AUC | Parameters |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Classical SVM (RBF Kernel)** | — | — | **97.72 ± 1.59%** | **95.24 ± 4.12%** | **99.17 ± 1.24%** | **0.9944 ± 0.0060** | ~150 SVs |
-| **Classical Logistic Regression** | — | — | 97.54 ± 1.69% | 94.76 ± 3.91% | 99.17 ± 0.76% | 0.9939 ± 0.0057 | 31 |
-| **Classical XGBoost** | — | — | 96.49 ± 1.39% | 94.76 ± 1.99% | 97.50 ± 2.06% | 0.9919 ± 0.0085 | 100 Trees |
-| **3-Qubit CNOT-Star (QIVC)** | 3 | **IBIP** | **97.02 ± 0.48%** | **94.76 ± 1.99%** | **98.33 ± 1.24%** | **0.9962 ± 0.0006** | **48** |
-| **2-Qubit $\sqrt{\text{SWAP}}$ (QIVC)** | 2 | **IBIP** | 96.49 ± 0.87% | 93.33 ± 2.84% | 98.33 ± 1.24% | 0.9960 ± 0.0012 | 34 |
-| **2-Qubit Unitary iSWAP (QIVC)** | 2 | **IBIP** | 95.61 ± 0.78% | 91.90 ± 3.48% | 97.78 ± 1.24% | 0.9921 ± 0.0018 | 34 |
-| **2-Qubit SWAP (QIVC)** | 2 | **IBIP** | 95.61 ± 0.78% | 91.90 ± 3.48% | 97.78 ± 1.24% | 0.9917 ± 0.0018 | 34 |
-
----
+- **iSWAP:** the version-1 accuracy of 58.80% was an implementation error. The prototype code was not preserved. `experiments/debug_iswap.py` shows that a real-typed iSWAP matrix, whose *i* entries are zeroed so the gate is not unitary, produces a comparable collapse, whereas discarding the statevector's imaginary part does not.
+- **IBIP vs sequential:** version 1 reported IBIP 97.02% vs Sequential 94.91% on WDBC. The rebuilt, matched pipeline does not reproduce that result; see the tables above.
 
 ## Citation
 
-https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-.git
-
-
+Kaila D, Aggarwal M, Muhuri S. Importance-Balanced Interleaved Feature Projection for Quantum-Inspired Variational Classifiers. *Academia Quantum* (under revision). Code: https://github.com/hubdk17/Breast_Cancer_QML-Wisconsin-
