@@ -13,13 +13,13 @@ $^*$ **Correspondence:** dkaila_be25@thapar.edu
 
 ### Abstract
 
-**Introduction:** Quantum-inspired machine learning offers a mathematically principled framework for evaluating non-linear representation learning, parameter-shift optimization, and multi-qubit interaction mechanisms on classical computing architectures. However, in continuous tabular biomedical classification—particularly for breast cancer cytology—the interplay between continuous feature allocation across low-qubit registers and circuit interaction topologies remains poorly understood.
+**Introduction:** Quantum-inspired machine learning offers a mathematical framework for studying non-linear representation learning, parameter-shift optimization, and multi-qubit interaction mechanisms on classical computing architectures. In continuous tabular biomedical classification—such as breast cancer cytology—the relationship between feature allocation across low-qubit registers and circuit interaction topologies remains an open question.
 
-**Materials and methods:** This study addresses the feature allocation problem in quantum-inspired variational classifiers (QIVCs) applied to breast cancer diagnosis. High-dimensional cytology vectors must be mapped into compact simulated qubit registers ($n \in \{2, 3\}$), yet conventional sequential partitioning inadvertently concentrates dominant diagnostic indicators within a single register. We introduce an Importance-Balanced Interleaved Projection (IBIP) framework that quantifies feature importance on training partitions using permutation importance and distributes features cyclically across qubits, ensuring balanced information budgets across all registers. The model combines classical non-linear projection ($\phi_q = \pi \tanh(W_q^T x_q / \sqrt{|x_q|})$) with exact numerical statevector simulation in complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ under parameterized unitary single-qubit rotations and multi-qubit interaction topologies, measured via Pauli-$Z$ expectations. Two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit interaction graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) were evaluated in separate, unconfounded experimental suites on the benchmark Wisconsin Diagnostic Breast Cancer (WDBC) dataset ($N=569$, 30 cytological features) across matched random seeds and five-fold stratified cross-validation. To isolate the exact mechanism of IBIP on breast cancer classification, a four-way ablation study was conducted on WDBC comparing sequential, random, importance-blocked (no interleaving), and IBIP allocations. Furthermore, to theorize the generalizability of the IBIP concept beyond the specific semantic ordering of the WDBC dataset, the framework was extended and benchmarked across three additional biomedical datasets (Parkinson's disease, Cleveland heart disease, and Breast Cancer Coimbra), and benchmarked against six standardized classical baselines.
+**Materials and methods:** This study examines the feature allocation problem in quantum-inspired variational classifiers (QIVCs) applied to breast cancer diagnosis. Continuous cytological descriptors must be mapped into compact simulated qubit registers ($n \in \{2, 3\}$), where conventional sequential grouping can place disproportionate predictive leverage into a single register. We examine an Importance-Balanced Interleaved Projection (IBIP) strategy that ranks features on training data using permutation importance and distributes them cyclically across qubits, aiming to provide balanced feature distributions across registers. The model combines classical non-linear projection ($\phi_q = \pi \tanh(W_q^T x_q / \sqrt{|x_q|})$) with numerical statevector simulation in complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ under parameterized unitary single-qubit rotations and multi-qubit interaction topologies, measured via Pauli-$Z$ expectations. Two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit interaction graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) were evaluated in separate, controlled experimental suites on the Wisconsin Diagnostic Breast Cancer (WDBC) dataset ($N=569$, 30 cytological features) across matched random seeds and five-fold stratified cross-validation. To examine the role of interleaving, a four-way ablation study was conducted on WDBC comparing sequential, random, importance-blocked (no interleaving), and IBIP allocations. To evaluate whether the observed trends generalize beyond the column arrangement of WDBC, the framework was additionally tested on three external biomedical datasets (Parkinson's disease, Cleveland heart disease, and Breast Cancer Coimbra), and benchmarked against six classical machine learning baselines.
 
-**Results:** On the primary WDBC breast cancer task, the 3-qubit CNOT-Star architecture with IBIP achieved a mean test accuracy of $97.02\% \pm 0.48\%$ and an ROC-AUC of $0.9962 \pm 0.0006$ across five matched seeds, significantly outperforming conventional sequential allocation ($94.91\% \pm 1.14\%$ accuracy, $0.9909 \pm 0.0028$ ROC-AUC; paired difference $+2.11\%$, $95\%\text{ CI: }[0.45\%, 3.76\%]$, paired $t(4) = 3.5415, p = 0.0240$, Wilcoxon $W = 0.0, p = 0.0431$, Cohen's $d_z = 1.5838$). In five-fold cross-validation, IBIP CNOT-Star demonstrated robust patient generalization ($95.26\% \pm 1.82\%$ accuracy, ROC-AUC $0.9840 \pm 0.0113$). The four-way ablation on WDBC established that grouping features in contiguous importance blocks without interleaving causes register starvation, dropping accuracy to $92.81\% \pm 2.51\%$; round-robin interleaving restores balanced information budgets, lifting accuracy to $95.26\% \pm 2.95\%$ ($+2.46\%$ gain, Cohen's $d_z = 0.923$). In two-qubit exchange evaluation on WDBC, unitary iSWAP achieved $95.61\% \pm 0.78\%$ accuracy and $0.9921 \pm 0.0018$ ROC-AUC, fully matching SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). In secondary generalization experiments across external datasets, IBIP proved that its benefits are not an artifact of WDBC's feature ordering: on Parkinson's disease, IBIP outperformed sequential allocation by $+5.64\%$ ($84.10\%$ vs. $78.46\%$, Cohen's $d_z = 1.144$), and on heart disease, it outperformed blocked allocation by $+8.20\%$ ($80.66\%$ vs. $72.46\%$). Classical reference baselines on WDBC reached $97.72\% \pm 1.59\%$ (SVM RBF) and $97.54\% \pm 1.69\%$ (Logistic Regression).
+**Results:** On the WDBC breast cancer task, the 3-qubit CNOT-Star architecture with IBIP achieved a mean test accuracy of $97.02\% \pm 0.48\%$ and an ROC-AUC of $0.9962 \pm 0.0006$ across five matched seeds, showing higher accuracy than sequential allocation ($94.91\% \pm 1.14\%$ accuracy, $0.9909 \pm 0.0028$ ROC-AUC; paired difference $+2.11\%$, $95\%\text{ CI: }[0.45\%, 3.76\%]$, paired $t(4) = 3.5415, p = 0.0240$, Wilcoxon $W = 0.0, p = 0.0431$, Cohen's $d_z = 1.5838$). In five-fold cross-validation, IBIP CNOT-Star yielded $95.26\% \pm 1.82\%$ accuracy and an ROC-AUC of $0.9840 \pm 0.0113$. The four-way ablation on WDBC indicated that assigning features in contiguous blocks of descending importance without interleaving resulted in lower accuracy ($92.81\% \pm 2.51\%$), whereas round-robin interleaving yielded $95.26\% \pm 2.95\%$ ($+2.46\%$ gain, Cohen's $d_z = 0.923$). In two-qubit exchange evaluation on WDBC, unitary iSWAP achieved $95.61\% \pm 0.78\%$ accuracy and $0.9921 \pm 0.0018$ ROC-AUC, performing similarly to SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). In secondary evaluations on external datasets, IBIP maintained steady performance, achieving higher accuracy than sequential allocation on Parkinson's disease ($84.10\%$ vs. $78.46\%$) and higher accuracy than blocked allocation on heart disease ($80.66\%$ vs. $72.46\%$). Classical reference baselines on WDBC achieved the highest overall accuracy: SVM RBF reached $97.72\% \pm 1.59\%$ and Logistic Regression reached $97.54\% \pm 1.69\%$.
 
-**Conclusions:** For breast cancer diagnosis, importance-balanced interleaving (IBIP) reliably enhances classification accuracy and patient generalization by preventing register starvation and allowing entangling operations to mediate cross-attribute interactions among high-leverage nuclear morphology features. Centralized hub-and-spoke topologies (CNOT-Star) provide superior feature coordination over linear chains or cyclic rings due to shorter graph paths and higher subsystem entanglement entropy ($S(\rho_{Q_0}) = 0.4978$ bits). Furthermore, extension to external clinical datasets confirms that interleaving is a general architectural principle in quantum-inspired learning. While classical kernel SVM and logistic regression achieve slightly higher raw accuracy, the 3-qubit CNOT-Star QIVC achieves competitive clinical performance using only 48 parameters, serving as a highly compact representation model and a direct algorithmic testbed for near-term quantum processors.
+**Conclusions:** In the context of breast cancer diagnosis, importance-balanced interleaving (IBIP) provides a practical method for distributing ranked features across low-qubit registers, improving classification performance over naive sequential grouping. Centralized hub-and-spoke topologies (CNOT-Star) demonstrated higher accuracy and greater central subsystem entanglement entropy ($S(\rho_{Q_0}) = 0.4978$ bits) than linear chains or cyclic rings. Secondary experiments on external clinical datasets support the utility of interleaving across different tabular structures. While classical kernel SVM ($97.72\%$) and logistic regression ($97.54\%$) remain the top performers in terms of raw accuracy on WDBC, the 3-qubit CNOT-Star QIVC achieves competitive diagnostic performance ($97.02\%$) using 48 trainable parameters, serving as an exploratory model for compact, non-linear representation learning.
 
 **Keywords:** Quantum-Inspired Machine Learning; Variational Quantum Classifier; Feature Allocation; Circuit Interaction Topology; Breast Cancer Diagnosis; Fine-Needle Aspiration Cytology; Entanglement Entropy
 
@@ -27,23 +27,23 @@ $^*$ **Correspondence:** dkaila_be25@thapar.edu
 
 ## 1. Introduction
 
-Breast cancer is among the most frequently diagnosed malignancies and a leading cause of cancer mortality in women globally. Early, reliable, and precise detection from digitized fine-needle aspiration (FNA) cytology is vital for guiding therapeutic interventions and improving patient outcomes [1,4]. The Wisconsin Diagnostic Breast Cancer (WDBC) benchmark dataset [24] has served as a cornerstone for evaluating diagnostic machine learning algorithms. Classical paradigms—such as Support Vector Machines (SVMs) [1,15], Random Forests [5], and Gradient Boosted Decision Trees (XGBoost) [6]—have demonstrated high diagnostic efficacy on this task. Nevertheless, exploring how alternative computational frameworks structure, project, and coordinate complex morphological features remains a compelling research objective at the intersection of oncology and computational intelligence.
+Breast cancer is among the most frequently diagnosed malignancies and a primary cause of cancer-related mortality in women globally. Early and accurate detection from digitized fine-needle aspiration (FNA) cytology is an important component of clinical assessment and treatment planning [1,4]. The Wisconsin Diagnostic Breast Cancer (WDBC) benchmark dataset [24] has served as a widely used reference for evaluating diagnostic machine learning algorithms. Classical models—such as Support Vector Machines (SVMs) [1,15], Random Forests [5], and Gradient Boosted Decision Trees (XGBoost) [6]—have demonstrated high diagnostic efficacy on this task. At the same time, exploring how alternative computational frameworks structure, project, and coordinate complex morphological features remains a topic of active interest.
 
-Recent advances in quantum computing and quantum machine learning (QML) [2,3,7] have stimulated substantial interest in variational quantum classifiers (VQCs) and quantum-inspired learning models [8–11]. These architectures exploit high-dimensional Hilbert space mappings, parameterized unitary rotation gates, multi-qubit entangling operations, and quantum expectation measurements to learn non-linear classification boundaries [10,11]. A variety of quantum-classical hybrid designs have been explored for breast cancer diagnosis, including quantum kernels, quantum support vector classifiers (QSVCs) [12], quantum convolutional neural networks (QCNNs) [13], and hybrid quantum-classical convolutional models [14].
+Recent advances in quantum computing and quantum machine learning (QML) [2,3,7] have encouraged the study of variational quantum classifiers (VQCs) and quantum-inspired learning models [8–11]. These architectures explore high-dimensional Hilbert space mappings, parameterized unitary rotation gates, multi-qubit entangling operations, and expectation value measurements to construct non-linear decision boundaries [10,11]. Multiple hybrid designs have been investigated for breast cancer classification, including quantum kernels, quantum support vector classifiers (QSVCs) [12], quantum convolutional neural networks (QCNNs) [13], and hybrid convolutional models [14].
 
-Despite these developments, a critical structural challenge in deploying variational quantum classifiers on continuous cytological data is the **feature allocation problem**. In near-term quantum processors and quantum-inspired simulators, high-dimensional classical vectors (specifically, the 30 continuous nuclear descriptors in WDBC) must be mapped into a low number of simulated qubit registers ($n \in \{2, 3\}$). Conventional pipelines universally rely on naive sequential block partitioning, where features are grouped strictly by their original column index in the dataset. In biomedical datasets where morphological metrics are ordered by category (e.g., mean nuclear characteristics, followed by standard errors, followed by extreme "worst" values), sequential assignment concentrates the most diagnostic features into a single register, leaving companion registers impoverished. Consequently, multi-qubit entangling operations are deprived of the ability to coordinate complementary diagnostic signals across registers.
+A practical challenge in deploying variational classifiers on continuous tabular data is the **feature allocation problem**. In near-term quantum processors and quantum-inspired simulators, high-dimensional classical vectors (such as the 30 continuous nuclear descriptors in WDBC) are typically compressed into a small number of simulated qubit registers ($n \in \{2, 3\}$). Standard implementations often rely on sequential block partitioning, where features are grouped according to their original column index in the dataset. When tabular features are ordered by category (for instance, mean nuclear characteristics, followed by standard errors, followed by extreme "worst" values), sequential assignment concentrates dominant attributes into a single register, leaving companion registers with relatively little discriminative information. Under such an imbalance, entangling gates have limited opportunity to coordinate complementary diagnostic signals across registers.
 
-Furthermore, prior research has largely evaluated single circuit interaction topologies in isolation, without systematically evaluating how gate interaction patterns (such as sequential chains, centralized stars, cyclic rings, or partial-exchange gates) impact learning dynamics under controlled conditions.
+Additionally, prior studies have often evaluated specific circuit topologies in isolation, without systematically comparing different interaction geometries (such as linear chains, centralized stars, cyclic rings, or partial-exchange gates) under matched conditions.
 
-### Primary Focus and Contributions of this Study
+### Objectives and Scope of this Study
 
-The primary objective of this work is to establish a rigorous, leakage-free framework for **breast cancer diagnosis on the WDBC dataset** using quantum-inspired variational classifiers (QIVCs). To provide a comprehensive scientific foundation, this paper makes the following key contributions:
-1. **Importance-Balanced Interleaved Projection (IBIP) on Breast Cancer Cytology:** We formulate an allocation strategy that quantifies nuclear feature importance on training data via permutation importance and distributes features cyclically across qubit registers, ensuring that dominant diagnostic drivers (e.g., worst concave points, worst texture, and worst perimeter) are balanced across registers.
-2. **Controlled Evaluation of Circuit Interaction Topologies on WDBC:** We separate two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit interaction graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) into independent, unconfounded experimental suites on WDBC under identical data splits, identical seeds, and 5-fold cross-validation.
-3. **Four-Way Ablation on WDBC:** We conduct a 4-way ablation on breast cancer classification comparing Sequential, Random, Importance-Blocked (no interleaving), and IBIP allocations to isolate why interleaving is necessary to prevent register starvation.
-4. **Quantitative Topological Mechanics on WDBC:** We analyze why CNOT-Star outperforms CNOT-Chain on breast cancer diagnosis using graph-theoretic mean shortest paths, subsystem von Neumann entanglement entropy $S(\rho_q)$, and parameter-shift gradient dynamics.
-5. **Rigorous Clinical Alignment and Classical Baselines:** We benchmark QIVCs against six standardized classical baselines (SVM RBF/Linear, XGBoost, Ridge, Logistic Regression, Random Forest), explicitly defining Malignant as the positive clinical class and examining decision threshold selection ($\tau = 0.35$ yielding $98.10\%$ sensitivity).
-6. **Theoretical Extension Across Diverse Biomedical Datasets:** Having developed and validated IBIP on breast cancer cytology, we further experiment with and theorize the generalizability of the IBIP concept by testing it across three external biomedical benchmarks (Parkinson's disease, Cleveland heart disease, and Breast Cancer Coimbra), proving that the advantage of interleaving is a fundamental principle of quantum-inspired learning rather than an artifact of WDBC's feature ordering.
+The primary objective of this work is to evaluate feature allocation and circuit interaction topologies in quantum-inspired variational classifiers, with a focus on **breast cancer diagnosis using the WDBC dataset**. The specific areas addressed in this study are:
+1. **Importance-Balanced Interleaved Projection (IBIP) on Breast Cancer Cytology:** We formulate an allocation method that ranks nuclear morphology features on training data using permutation importance and distributes them cyclically across qubit registers, aiming to provide each register with a balanced share of informative attributes.
+2. **Controlled Evaluation of Circuit Topologies on WDBC:** We examine two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, unitary iSWAP, CNOT, Independent) and three-qubit interaction graphs (CNOT-Star, CNOT-Chain, CNOT-Ring, SWAP-Star, SWAP-Chain, Full-Mesh, Independent) in separate, controlled experimental suites on WDBC under matched data splits, identical seeds, and 5-fold cross-validation.
+3. **Four-Way Ablation on WDBC:** We perform an ablation study on breast cancer classification comparing Sequential, Random, Importance-Blocked (no interleaving), and IBIP allocations to examine the specific role of interleaving.
+4. **Quantitative Analysis of Topologies on WDBC:** We compare CNOT-Star and CNOT-Chain on breast cancer diagnosis using graph-theoretic mean shortest paths, subsystem von Neumann entanglement entropy $S(\rho_q)$, and parameter-shift gradient dynamics.
+5. **Baseline Comparison and Clinical Operating Points:** We compare QIVCs with six classical machine learning baselines (SVM RBF/Linear, XGBoost, Ridge, Logistic Regression, Random Forest), define Malignant as the positive clinical class, and examine the effect of decision threshold tuning on diagnostic sensitivity.
+6. **Secondary Evaluation Across External Datasets:** Having evaluated IBIP on breast cancer cytology, we test the approach on three external biomedical benchmarks (Parkinson's disease, Cleveland heart disease, and Breast Cancer Coimbra) to assess whether the trends observed on WDBC hold across different tabular feature layouts.
 
 ---
 
@@ -65,35 +65,35 @@ The primary subject of this study is the Wisconsin Diagnostic Breast Cancer (WDB
 
 Each metric is reported in three summaries: mean value (features 0–9), standard error (features 10–19), and "worst" or largest value (features 20–29).
 
-#### Clinical Positive Class Designation
-In clinical breast oncology, sensitive identification of malignant lesions is paramount to prevent delayed therapeutic intervention. Among the 569 patient samples, 212 ($37.26\%$) are diagnosed as **Malignant** and 357 ($62.74\%$) as **Benign**. For all quantitative evaluations, **Malignant** is explicitly designated as the positive class ($y = 1$), while **Benign** represents the negative class ($y = 0$). All clinical metrics—Sensitivity (Malignant Recall), Specificity (Benign Recall), Precision (Positive Predictive Value), and F1-Score—are computed with respect to this clinically grounded convention. Full confusion matrices ($2 \times 2$: TP, FP, FN, TN) are recorded for all models.
+#### Clinical Class Definition
+In clinical breast cancer evaluation, high sensitivity in identifying malignant cases is desirable to reduce the potential for false negatives. Among the 569 patient samples, 212 ($37.26\%$) are diagnosed as **Malignant** and 357 ($62.74\%$) as **Benign**. For all evaluations, **Malignant** is designated as the positive class ($y = 1$), while **Benign** represents the negative class ($y = 0$). Clinical metrics—Sensitivity (Malignant Recall), Specificity (Benign Recall), Precision (Positive Predictive Value), and F1-Score—are computed accordingly, and $2 \times 2$ confusion matrices are reported.
 
-### 2.2 Leakage-Free Preprocessing Protocol
+### 2.2 Preprocessing and Leakage Prevention
 
 All continuous features were standardized using $z$-score normalization:
 $$z = \frac{x - \mu_{\text{train}}}{\sigma_{\text{train}}}$$
-To prevent data leakage, normalization parameters ($\mu_{\text{train}}, \sigma_{\text{train}}$) and feature ranking models were fitted **strictly on the training partition** of each split or cross-validation fold. Held-out validation and test cases remained entirely unexposed during feature standardization, importance ranking, and parameter training.
+To prevent data leakage, normalization parameters ($\mu_{\text{train}}, \sigma_{\text{train}}$) and feature ranking models were fitted **strictly on the training partition** of each split or cross-validation fold. Held-out validation and test cases remained unexposed during feature standardization, importance ranking, and model parameter optimization.
 
-### 2.3 Feature Importance Quantification on Breast Cytology
+### 2.3 Feature Importance Estimation on Breast Cytology
 
-Feature importance was quantified using permutation importance computed on an XGBoost classifier trained strictly on the training partition [5,6,23]. Permutation importance measures the increase in model classification log-loss when the values of a single feature are randomly shuffled across samples, breaking the feature-target relationship while preserving the marginal feature distribution:
+Feature importance was estimated using permutation importance computed on an XGBoost classifier trained on the training partition [5,6,23]. Permutation importance measures the change in classification log-loss when the values of a single feature are randomly shuffled across samples:
 $$I(f_j) = \mathcal{L}(X^{\text{perm}(j)}, y) - \mathcal{L}(X, y)$$
 Averaged across 20 shuffle iterations, features were sorted in descending order of mean importance: $\mathcal{R} = [r_1, r_2, \dots, r_{30}]$, where $r_1$ denotes the most influential feature.
 
-In the WDBC dataset, the highest-ranking features consistently comprise extreme nuclear morphology indicators: `worst texture` ($r_1$), `worst concave points` ($r_2$), `area error` ($r_3$), `worst perimeter` ($r_4$), `mean texture` ($r_5$), and `worst concavity` ($r_6$).
+In the WDBC dataset, top-ranking features consistently include extreme nuclear morphology indicators: `worst texture` ($r_1$), `worst concave points` ($r_2$), `area error` ($r_3$), `worst perimeter` ($r_4$), `mean texture` ($r_5$), and `worst concavity` ($r_6$).
 
 ### 2.4 Importance-Balanced Interleaved Projection (IBIP)
 
-Let $n \in \{2, 3\}$ denote the number of qubit registers, and let $D = 30$ denote the total number of input features in WDBC. Conventional sequential block partitioning assigns contiguous blocks of features based on arbitrary dataset indexing:
+Let $n \in \{2, 3\}$ denote the number of qubit registers, and let $D = 30$ denote the total number of input features in WDBC. Conventional sequential block partitioning assigns contiguous blocks of features based on dataset indexing:
 $$\mathcal{S}_q^{\text{Seq}} = \left\{ f_i \;\middle|\; i \in \left[ q \cdot \frac{D}{n}, (q+1) \cdot \frac{D}{n} - 1 \right] \right\}$$
-In WDBC, sequential partitioning assigns all "mean" descriptors to $Q_0$, standard errors to $Q_1$, and "worst" descriptors to $Q_2$. This heavily concentrates predictive leverage in $Q_2$, while leaving $Q_1$ with minimal discriminative variance.
+In WDBC, sequential partitioning places "mean" descriptors onto $Q_0$, standard errors onto $Q_1$, and "worst" descriptors onto $Q_2$.
 
-The proposed **Importance-Balanced Interleaved Projection (IBIP)** distributes features cyclically across qubits according to their permutation importance rank $\mathcal{R}$:
+The **Importance-Balanced Interleaved Projection (IBIP)** distributes features cyclically across qubits according to their permutation importance rank $\mathcal{R}$:
 $$\mathcal{S}_q^{\text{IBIP}} = \left\{ r_k \in \mathcal{R} \;\middle|\; (k - 1) \equiv q \pmod n \right\}$$
 - For $n = 2$ qubits (15–15 allocation): $Q_0$ receives ranks $\{1, 3, 5, \dots, 29\}$; $Q_1$ receives ranks $\{2, 4, 6, \dots, 30\}$.
 - For $n = 3$ qubits (10–10–10 allocation): $Q_0$ receives ranks $\{1, 4, 7, \dots, 28\}$; $Q_1$ receives ranks $\{2, 5, 8, \dots, 29\}$; $Q_2$ receives ranks $\{3, 6, 9, \dots, 30\}$.
 
-IBIP guarantees that top-tier diagnostic signals are equitably allocated across all simulated registers, ensuring that entangling interaction gates mediate synergy among complementary diagnostic attributes rather than coupling an informative register to an uninformative one.
+IBIP distributes ranked features across registers in an interleaved manner, seeking to provide each qubit with a balanced mixture of high- and moderate-variance attributes.
 
 ### 2.5 Hybrid Quantum-Inspired Variational Classifier Architecture
 
@@ -102,7 +102,7 @@ The classifier operates as a hybrid quantum-inspired parameterized model combini
 #### 2.5.1 Classical Non-Linear Feature Projection Layer
 For each qubit register $q \in \{0, \dots, n-1\}$, let $x_q \in \mathbb{R}^{d_q}$ denote the subvector of normalized features assigned to register $q$ ($d_q = 15$ for $n=2$; $d_q = 10$ for $n=3$). A trainable classical weight vector $W_q \in \mathbb{R}^{d_q}$ projects $x_q$ into a bounded scalar rotation angle $\phi_q$:
 $$\phi_q = \pi \cdot \tanh\left( \frac{W_q^T x_q}{\sqrt{d_q}} \right) \in (-\pi, \pi)$$
-The hyperbolic tangent non-linearity prevents rotation angle explosion and ensures numerical stability during gradient propagation, while the $1/\sqrt{d_q}$ normalization prevents saturation for larger feature groups.
+The hyperbolic tangent non-linearity prevents rotation angle explosion and supports numerical stability, while the $1/\sqrt{d_q}$ factor prevents saturation for larger feature groups.
 
 #### 2.5.2 Statevector Simulation in Hilbert Space
 The quantum circuit is simulated numerically via statevectors in complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$ of dimension $2^n$. The initial state is the computational ground state $|0\dots0\rangle = [1, 0, \dots, 0]^T \in \mathbb{C}^{2^n}$.
@@ -110,46 +110,46 @@ The quantum circuit is simulated numerically via statevectors in complex Hilbert
    $$R_y(\phi_q) = \begin{pmatrix} \cos(\phi_q/2) & -\sin(\phi_q/2) \\ \sin(\phi_q/2) & \cos(\phi_q/2) \end{pmatrix}, \quad R_z(e_q) = \begin{pmatrix} e^{-i e_q/2} & 0 \\ 0 & e^{i e_q/2} \end{pmatrix}$$
    where $e_q$ is a trainable encoding phase parameter initialized near zero.
 2. **Interaction Topology Layer:** A sequence of two-qubit unitary operators $\{U_{\text{int}}^{(k)}\}$ is applied according to the evaluated circuit topology (detailed in Section 2.6).
-3. **Variational Rotation Layer:** To provide adaptive post-interaction transformation, trainable rotation operators $R_y(v_q)$ and $R_z(v_q)$ are applied to each register $q$, parameterized by trainable variational angles $v_q$.
+3. **Variational Rotation Layer:** Trainable rotation operators $R_y(v_q)$ and $R_z(v_q)$ are applied to each register $q$, parameterized by trainable variational angles $v_q$.
 4. **Measurement Layer:** The expectation values of the Pauli-$Z$ operator on each qubit are measured:
    $$z_q = \langle \psi | Z_q | \psi \rangle = \psi^\dagger \left( I \otimes \dots \otimes Z_q \otimes \dots \otimes I \right) \psi \in [-1, 1]$$
    where $Z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$.
 
 #### 2.5.3 Classical Readout Layer
-The expectation vector $z = [z_0, \dots, z_{n-1}]^T$ is mapped to a scalar logit via a trainable linear layer with weights $\beta \in \mathbb{R}^n$ and bias $b \in \mathbb{R}$:
+The expectation vector $z = [z_0, \dots, z_{n-1}]^T$ is mapped to a scalar logit via a linear layer with weights $\beta \in \mathbb{R}^n$ and bias $b \in \mathbb{R}$:
 $$\text{logit} = \sum_{q=0}^{n-1} \beta_q z_q + b, \quad \hat{y} = \sigma(\text{logit}) = \frac{1}{1 + e^{-\text{logit}}}$$
 where $\hat{y} \in (0, 1)$ represents the model's predicted probability of malignancy. Binary predictions are evaluated at a default threshold of $\tau = 0.50$.
 
 ### 2.6 Circuit Interaction Topologies
 
-To isolate the influence of interaction geometry, we investigated distinct interaction topologies categorized strictly by qubit count:
+To examine the influence of interaction geometry, we evaluated distinct interaction topologies categorized by qubit count:
 
 #### Two-Qubit Topologies ($n = 2$, 15–15 allocation):
-1. **SWAP:** Exposes complete state exchange without phase modulation:
+1. **SWAP:** Full state exchange without phase modulation:
    $$U_{\text{SWAP}} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
-2. **Square-Root SWAP ($\sqrt{\text{SWAP}}$):** Creates partial state exchange and intermediate entanglement:
+2. **Square-Root SWAP ($\sqrt{\text{SWAP}}$):** Partial state exchange:
    $$U_{\sqrt{\text{SWAP}}} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & \frac{1+i}{2} & \frac{1-i}{2} & 0 \\ 0 & \frac{1-i}{2} & \frac{1+i}{2} & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
-3. **Unitary iSWAP:** Combines state swap with a relative phase shift of $\pi/2$ on computational states $|01\rangle$ and $|10\rangle$:
+3. **Unitary iSWAP:** State exchange accompanied by a relative phase shift of $\pi/2$ on states $|01\rangle$ and $|10\rangle$:
    $$U_{\text{iSWAP}} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & i & 0 \\ 0 & i & 0 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 4. **CNOT ($Q_0 \to Q_1$):** Standard controlled-NOT conditional bit flip: $|x, y\rangle \mapsto |x, x \oplus y\rangle$.
-5. **Independent (None):** Qubits remain uncoupled, providing an unentangled baseline to test whether two-qubit interactions provide measurable advantage over parallel uncoupled registers.
+5. **Independent (None):** Uncoupled registers, providing a baseline without two-qubit entangling operations.
 
 #### Three-Qubit Topologies ($n = 3$, 10–10–10 allocation):
-1. **CNOT-Star:** Hub-and-spoke centralized architecture with Qubit 0 as hub: $Q_0 \to Q_1$ and $Q_0 \to Q_2$.
-2. **CNOT-Chain:** Linear hierarchical cascade: $Q_0 \to Q_1 \to Q_2$.
+1. **CNOT-Star:** Hub-and-spoke configuration with Qubit 0 as hub: $Q_0 \to Q_1$ and $Q_0 \to Q_2$.
+2. **CNOT-Chain:** Linear cascade: $Q_0 \to Q_1 \to Q_2$.
 3. **CNOT-Ring:** Closed cyclic loop: $Q_0 \to Q_1 \to Q_2 \to Q_0$.
-4. **SWAP-Star:** Centralized bidirectional state exchange: $\text{SWAP}(0, 1)$ and $\text{SWAP}(0, 2)$.
+4. **SWAP-Star:** Centralized bidirectional exchange: $\text{SWAP}(0, 1)$ and $\text{SWAP}(0, 2)$.
 5. **SWAP-Chain:** Linear cascade of state swaps: $\text{SWAP}(0, 1)$ and $\text{SWAP}(1, 2)$.
-6. **Full-Mesh:** All-to-all connectivity: pairwise CNOT gates across all three qubit pairs.
+6. **Full-Mesh:** Pairwise CNOT gates across all three qubit pairs.
 7. **Independent (None):** Uncoupled 3-qubit register.
 
 ### 2.7 Hybrid Optimization Framework
 
 The training objective is Binary Cross-Entropy (BCE) loss:
 $$\mathcal{L}(y, \hat{y}) = - \left[ y \log(\hat{y}) + (1 - y) \log(1 - \hat{y}) \right]$$
-Gradients are computed using an exact hybrid scheme:
+Gradients are evaluated using a hybrid scheme:
 1. **Parameter Shift Rule (PSR) for Circuit Parameters:**  
-   For rotation angles $\theta \in \{e_q, v_q\}$, the loss gradient is evaluated analytically via the exact parameter shift rule [8,10]:
+   For rotation angles $\theta \in \{e_q, v_q\}$, the loss gradient is evaluated analytically via the parameter shift rule [8,10]:
    $$\frac{\partial \mathcal{L}}{\partial \theta} = (\hat{y} - y) \cdot \frac{f(\theta + \pi/2) - f(\theta - \pi/2)}{2}$$
 2. **Chain Rule on Non-Linear Projections:**  
    For classical projection weights $W_{q, j}$, gradients are evaluated via the chain rule through the rotation angle $\phi_q$:
@@ -158,7 +158,7 @@ Gradients are computed using an exact hybrid scheme:
 3. **Superpositional Gradient Descent (SuperGD):**  
    Parameters are updated using SuperGD [22], which modulates the gradient step with a parameter-dependent sinusoidal interference component:
    $$p_{t+1} = p_t - \eta \cdot g_t \cdot \left( 1 + \lambda \sin(\pi p_t) \right)$$
-   Hyperparameters were held constant across all models: learning rate $\eta = 0.01$, interference strength $\lambda = 0.5$, and 50 training epochs. Table 1 summarizes the core simulation and optimization parameters.
+   Hyperparameters were held constant across all models: learning rate $\eta = 0.01$, interference strength $\lambda = 0.5$, and 50 training epochs. Table 1 summarizes the simulation and optimization parameters.
 
 | Parameter | Configuration / Value |
 | :--- | :--- |
@@ -172,26 +172,26 @@ Gradients are computed using an exact hybrid scheme:
 
 *Table 1. Hyperparameters and simulation settings for the quantum-inspired variational classifier.*
 
-### 2.8 Classical Baseline Classifiers and Experimental Protocols
+### 2.8 Classical Baseline Classifiers and Protocol
 
-To provide rigorous context on the WDBC task, six classical machine learning algorithms were benchmarked under identical conditions:
-1. **Support Vector Machine (RBF Kernel):** Non-linear kernel classifier with squared slack penalty ($C=1.0, \gamma = 1/D$).
-2. **Support Vector Machine (Linear Kernel):** Linear margin maximizer ($C=1.0$).
-3. **Logistic Regression:** Regularized linear model ($C=1.0, L_2$ penalty).
-4. **XGBoost:** Gradient boosted decision trees (100 estimators, max depth 3, learning rate 0.1).
-5. **Random Forest:** Bagged ensemble of decision trees (100 trees, max depth 5).
-6. **Ridge Classifier:** $L_2$-regularized linear least-squares classifier ($\alpha=1.0$).
+To contextualize QIVC performance on the WDBC task, six classical machine learning algorithms were benchmarked under identical data splits and preprocessing:
+1. **Support Vector Machine (RBF Kernel):** $C=1.0, \gamma = 1/D$.
+2. **Support Vector Machine (Linear Kernel):** $C=1.0$.
+3. **Logistic Regression:** $C=1.0, L_2$ penalty.
+4. **XGBoost:** 100 estimators, max depth 3, learning rate 0.1.
+5. **Random Forest:** 100 trees, max depth 5.
+6. **Ridge Classifier:** $\alpha=1.0$.
 
-All models were evaluated across five identical random seeds ($0, 42, 123, 777, 2025$) on an 80:20 stratified split, as well as 5-fold stratified cross-validation. For statistical comparison, we computed paired Student's $t$-tests, Wilcoxon signed-rank tests, Cohen's $d_z$ effect sizes, and 95% confidence intervals on the paired differences.
+Models were evaluated across five random seeds ($0, 42, 123, 777, 2025$) on an 80:20 stratified split, as well as 5-fold stratified cross-validation. Paired Student's $t$-tests, Wilcoxon signed-rank tests, Cohen's $d_z$ effect sizes, and 95% confidence intervals were computed on paired differences.
 
-### 2.9 Secondary Generalization Datasets: Protocol for Cross-Domain Testing
+### 2.9 Secondary Datasets for Cross-Domain Generalization Testing
 
-To test the hypothesis that importance-balanced interleaving is a general architectural principle rather than an artifact of WDBC's specific feature ordering, we subsequently extended the evaluation to three diverse external biomedical benchmarks from the UCI Machine Learning Repository:
-- **Parkinson's Disease (UCI 174, Neurology):** 195 voice recordings characterized by 22 biomedical speech phonation measures (frequency variation, jitter, shimmer, harmonicity, and detrended fluctuation analysis). The clinical task is discriminating Parkinson's patients ($N=147$) from healthy controls ($N=48$).
-- **Cleveland Heart Disease (UCI 45, Cardiology):** 303 cardiovascular patients characterized by 13 clinical features (resting blood pressure, cholesterol, fasting blood sugar, resting ECG, maximum heart rate achieved, ST depression, fluoroscopy vessels, and thallium scintigraphy). The task is detecting presence of significant coronary stenosis ($>50\%$ diameter narrowing, $N=139$) versus non-significant disease ($N=164$).
-- **Breast Cancer Coimbra (UCI 451, Metabolic Oncology):** 116 female subjects evaluated across 9 routine metabolic serum biomarkers (Age, BMI, Glucose, Insulin, HOMA-IR, Leptin, Adiponectin, Resistin, and MCP-1). The task is discriminating breast cancer patients ($N=64$) from healthy controls ($N=52$).
+To evaluate whether the observations regarding interleaved feature allocation generalize beyond WDBC's specific feature structure, three external biomedical benchmarks from the UCI Machine Learning Repository were evaluated:
+- **Parkinson's Disease (UCI 174, Neurology):** 195 acoustic recordings characterized by 22 biomedical speech phonation measures. The task is discriminating Parkinson's patients ($N=147$) from healthy controls ($N=48$).
+- **Cleveland Heart Disease (UCI 45, Cardiology):** 303 cardiovascular patients characterized by 13 clinical features. The task is detecting presence of significant coronary stenosis ($>50\%$ diameter narrowing, $N=139$) versus non-significant disease ($N=164$).
+- **Breast Cancer Coimbra (UCI 451, Metabolic Oncology):** 116 female subjects evaluated across 9 blood serum biomarkers. The task is discriminating breast cancer patients ($N=64$) from healthy controls ($N=52$).
 
-Across all three external datasets, the exact same 3-qubit CNOT-Star QIVC pipeline was applied across 5 matched seeds ($0, 42, 123, 777, 2025$) using leakage-free training-fold permutation ranking.
+Across all three external datasets, the 3-qubit CNOT-Star QIVC pipeline was evaluated under the same protocol across 5 matched seeds ($0, 42, 123, 777, 2025$).
 
 ---
 
@@ -199,7 +199,7 @@ Across all three external datasets, the exact same 3-qubit CNOT-Star QIVC pipeli
 
 ### 3.1 Two-Qubit Controlled Interaction Suite on WDBC & iSWAP Verification
 
-Table 2 presents the controlled evaluation of two-qubit interaction operators on the WDBC dataset evaluated across five identical random seeds under both IBIP and Sequential feature allocations.
+Table 2 presents the controlled evaluation of two-qubit interaction operators on the WDBC dataset evaluated across five random seeds under both IBIP and Sequential feature allocations.
 
 | Topology | Allocation | Mean Accuracy (%) | Sensitivity (%) | Specificity (%) | Precision (%) | F1-Score (%) | Mean ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -222,11 +222,11 @@ Table 2 presents the controlled evaluation of two-qubit interaction operators on
   [See results/figures/figure3_gate_comparison_publication.png for 300 DPI render]
 ```
 
-When iSWAP is simulated under strict complex Hilbert space unitarity, it achieves $95.61\% \pm 0.78\%$ accuracy and $0.9921 \pm 0.0018$ ROC-AUC under IBIP on WDBC, fully matching SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). The previously observed anomalous drop to $58.80\%$ in preliminary prototype scripts was traced to inadvertent truncation of imaginary amplitudes during state coercion. Across all two-qubit operators, IBIP consistently produces a $+1.2\%$ to $+2.6\%$ accuracy advantage over Sequential allocation.
+When iSWAP is simulated under complex Hilbert space unitarity, it achieves $95.61\% \pm 0.78\%$ accuracy and $0.9921 \pm 0.0018$ ROC-AUC under IBIP on WDBC, in line with SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). The previously observed anomalous drop to $58.80\%$ in early prototype code was traced to an unintentional real-value truncation that discarded imaginary phase components during state coercion. Across the two-qubit operators, IBIP yielded moderate accuracy improvements of $+1.2\%$ to $+2.6\%$ over Sequential allocation.
 
 ### 3.2 Three-Qubit Controlled Interaction Suite on WDBC
 
-Table 3 reports the evaluation of the seven 3-qubit interaction topologies on WDBC under identical protocols.
+Table 3 reports the evaluation of seven 3-qubit interaction topologies on WDBC under matched protocols.
 
 | Topology | Allocation | Mean Accuracy (%) | Sensitivity (%) | Specificity (%) | Precision (%) | F1-Score (%) | Mean ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -247,11 +247,11 @@ Table 3 reports the evaluation of the seven 3-qubit interaction topologies on WD
 
 *Table 3. Three-qubit controlled suite on WDBC: Performance across 5 random seeds (Mean ± SD) on 80:20 stratified splits.*
 
-The centralized **CNOT-Star** topology achieved the strongest overall classification accuracy ($97.02\% \pm 0.48\%$) and ROC-AUC ($0.9962 \pm 0.0006$) on WDBC, outperforming both the linear CNOT-Chain ($95.79\%$) and cyclic CNOT-Ring ($95.96\%$). Across all topologies, IBIP achieved statistically consistent improvements over Sequential allocation.
+The **CNOT-Star** topology achieved the highest classification accuracy ($97.02\% \pm 0.48\%$) and ROC-AUC ($0.9962 \pm 0.0006$) among evaluated quantum-inspired models on WDBC, exceeding the linear CNOT-Chain ($95.79\%$) and cyclic CNOT-Ring ($95.96\%$).
 
 ### 3.3 Controlled Ablation: IBIP vs. Sequential Partitioning on WDBC
 
-Table 4 presents the paired ablation contrast between IBIP and Sequential allocation across all topologies in the 3-qubit architecture on WDBC.
+Table 4 presents the paired ablation comparison between IBIP and Sequential allocation across all topologies in the 3-qubit architecture on WDBC.
 
 | Topology | IBIP Acc (%) | Seq Acc (%) | Paired Diff (%) | 95% CI Diff | Paired $t$ | $p$-value | Cohen's $d_z$ |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -265,7 +265,7 @@ Table 4 presents the paired ablation contrast between IBIP and Sequential alloca
 
 *Table 4. Paired ablation study comparing IBIP against Sequential partitioning across 3-qubit topologies on WDBC ($n=5$ matched seeds).*
 
-In every architecture, the $95\%$ confidence interval of the paired difference strictly excludes zero ($p < 0.05$), with large effect sizes ($d_z > 1.35$), confirming that balanced feature allocation provides a substantial performance gain across all interaction topologies.
+Across the tested topologies, the $95\%$ confidence interval of the paired difference was positive ($p < 0.05$), with effect sizes $d_z > 1.35$, indicating that balanced feature allocation provided a consistent performance improvement over sequential grouping.
 
 ### 3.4 Robustness & Matched Paired Statistical Analysis on WDBC
 
@@ -282,14 +282,14 @@ Table 5 presents the granular per-seed paired breakdown for the primary CNOT-Sta
 
 *Table 5. Per-seed matched robustness analysis for CNOT-Star on WDBC ($N = 114$ held-out test samples per seed).*
 
-- **Paired Student's $t$-test:** $t(4) = 3.5415, p = 0.0240$ (statistically significant at $\alpha = 0.05$).
+- **Paired Student's $t$-test:** $t(4) = 3.5415, p = 0.0240$ ($\alpha = 0.05$).
 - **Wilcoxon signed-rank test:** $W = 0.0, p = 0.0431$.
-- **Standardized Effect Size:** Cohen's $d_z = \frac{2.11}{1.33} = 1.5838$ (large effect).
+- **Effect Size:** Cohen's $d_z = \frac{2.11}{1.33} = 1.5838$.
 - **95% Confidence Interval of Paired Difference:** $[+0.45\%, +3.76\%]$.
 
 ### 3.5 Five-Fold Stratified Cross-Validation on WDBC
 
-To evaluate model stability across independent patient cohorts rather than random initializations on a single split, Table 6 displays the complete fold-by-fold results for the IBIP CNOT-Star architecture on WDBC.
+To evaluate model behavior across patient splits rather than initialization seeds alone, Table 6 displays fold-by-fold results for the IBIP CNOT-Star architecture on WDBC.
 
 | Fold | Accuracy (%) | Sensitivity (%) | Specificity (%) | Precision (%) | F1-Score (%) | ROC-AUC | TP | TN | FP | FN |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -300,13 +300,13 @@ To evaluate model stability across independent patient cohorts rather than rando
 | **5** | 95.58 | 95.58 | 95.58 | 93.02 | 94.28 | 0.9883 | 41 | 68 | 3 | 2 |
 | **Mean ± SD** | **95.26 ± 1.82** | **92.45 ± 3.25** | **96.89 ± 1.53** | **94.65 ± 2.65** | **93.52 ± 2.58** | **0.9840 ± 0.0113** | — | — | — | — |
 
-*Table 6. Five-fold stratified cross-validation for IBIP CNOT-Star on WDBC reporting all individual folds and clinical diagnostic metrics.*
+*Table 6. Five-fold stratified cross-validation for IBIP CNOT-Star on WDBC reporting individual folds and clinical diagnostic metrics.*
 
-The model maintains high sensitivity ($92.45\% \pm 3.25\%$) and specificity ($96.89\% \pm 1.53\%$) across folds, confirming that the architecture generalizes reliably across independent patient partitions without fold collapse.
+The model maintained sensitivity of $92.45\% \pm 3.25\%$ and specificity of $96.89\% \pm 1.53\%$ across folds, showing consistent performance across patient partitions.
 
-### 3.6 Comprehensive Classical Baseline Benchmarking on WDBC
+### 3.6 Classical Baseline Benchmarking on WDBC
 
-Table 7 integrates classical machine learning baselines on the WDBC dataset evaluated under identical protocols (StandardScaler fitted strictly on training data, identical 5 random seeds, identical 5-fold cross-validation).
+Table 7 integrates classical machine learning baselines on the WDBC dataset evaluated under identical data partitions and preprocessing.
 
 | Model Class | Architecture / Model | 5-Seed Accuracy (%) | 5-Seed Sensitivity (%) | 5-Seed Specificity (%) | 5-Seed ROC-AUC | 5-Fold CV Acc (%) | 5-Fold CV ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -335,47 +335,47 @@ Table 7 integrates classical machine learning baselines on the WDBC dataset eval
      [See results/figures/figure7_confusion_matrices.png for 300 DPI render]
 ```
 
-As demonstrated in Table 7 and Figures 6 and 7, the proposed CNOT-Star QIVC achieves performance competitive with classical models on WDBC, closely approaching RBF-SVM ($97.72\%$) and Logistic Regression ($97.54\%$) while outperforming Random Forest ($94.91\%$) and Ridge classification ($94.74\%$).
+As shown in Table 7, classical Support Vector Machines (RBF kernel, $97.72\% \pm 1.59\%$) and Logistic Regression ($97.54\% \pm 1.69\%$) achieved the highest accuracy, closely followed by the 3-qubit CNOT-Star QIVC ($97.02\% \pm 0.48\%$). The QIVC model achieved higher accuracy than Random Forest ($94.91\%$) and Ridge classification ($94.74\%$).
 
 ### 3.7 Architecture Synthesis on WDBC Across 5 Seeds
 
-Table 8 summarizes the empirical characteristics of all architectures evaluated in this study across 5 random seeds on the WDBC dataset.
+Table 8 summarizes performance characteristics across the evaluated quantum-inspired architectures on WDBC.
 
-| Architecture | Qubits | Mean Accuracy (%) | Mean ROC-AUC | Key Empirical Observation on WDBC |
+| Architecture | Qubits | Mean Accuracy (%) | Mean ROC-AUC | Empirical Observation on WDBC |
 | :--- | :---: | :---: | :---: | :--- |
-| **SWAP (IBIP)** | 2 | 95.61 ± 0.78 | 0.9917 ± 0.0018 | Strong performance without quantum entanglement |
-| **$\sqrt{\text{SWAP}}$ (IBIP)** | 2 | 96.49 ± 0.87 | 0.9960 ± 0.0012 | Intermediate exchange with partial entanglement |
+| **SWAP (IBIP)** | 2 | 95.61 ± 0.78 | 0.9917 ± 0.0018 | Competitive performance without entangling operations |
+| **$\sqrt{\text{SWAP}}$ (IBIP)** | 2 | 96.49 ± 0.87 | 0.9960 ± 0.0012 | Intermediate exchange with partial state mixing |
 | **iSWAP (IBIP, Unitary)**| 2 | 95.61 ± 0.78 | 0.9921 ± 0.0018 | Complex phase exchange matches standard SWAP |
-| **CNOT (0→1, IBIP)** | 2 | 95.79 ± 0.85 | 0.9925 ± 0.0020 | Directional conditional feature modulation |
+| **CNOT (0→1, IBIP)** | 2 | 95.79 ± 0.85 | 0.9925 ± 0.0020 | Directional conditional modulation |
 | **Independent (2Q, IBIP)**| 2 | 95.09 ± 0.80 | 0.9902 ± 0.0022 | Parallel uncoupled feature projection |
-| **CNOT-Star (IBIP)** | 3 | **97.02 ± 0.48** | **0.9962 ± 0.0006** | Highest accuracy & stability; centralized hub coordination |
-| **Full-Mesh (IBIP)** | 3 | 96.32 ± 0.72 | 0.9940 ± 0.0014 | High connectivity; slight parameter redundancy |
+| **CNOT-Star (IBIP)** | 3 | **97.02 ± 0.48** | **0.9962 ± 0.0006** | Highest mean accuracy and stability; central hub arrangement |
+| **Full-Mesh (IBIP)** | 3 | 96.32 ± 0.72 | 0.9940 ± 0.0014 | Dense connectivity; performance close to CNOT-Star |
 | **SWAP-Star (IBIP)** | 3 | 96.14 ± 0.65 | 0.9935 ± 0.0015 | Bidirectional exchange via central register |
-| **CNOT-Ring (IBIP)** | 3 | 95.96 ± 0.75 | 0.9930 ± 0.0016 | Cyclic feedback; competitive stability |
-| **CNOT-Chain (IBIP)** | 3 | 95.79 ± 0.85 | 0.9926 ± 0.0019 | Hierarchical cascade; comparable to 2Q CNOT |
+| **CNOT-Ring (IBIP)** | 3 | 95.96 ± 0.75 | 0.9930 ± 0.0016 | Cyclic connection pattern |
+| **CNOT-Chain (IBIP)** | 3 | 95.79 ± 0.85 | 0.9926 ± 0.0019 | Linear cascade; comparable to 2Q CNOT |
 | **SWAP-Chain (IBIP)** | 3 | 95.61 ± 0.78 | 0.9920 ± 0.0018 | Sequential feature swapping |
 | **Independent (3Q, IBIP)**| 3 | 95.26 ± 0.75 | 0.9908 ± 0.0020 | Parallel uncoupled 3-register baseline |
 
 *Table 8. Summary of evaluated quantum-inspired architectures on WDBC ($n=5$ seeds).*
 
-### 3.8 Four-Way Ablation Study on WDBC: Dissecting the Interleaving Mechanism
+### 3.8 Four-Way Ablation Study on WDBC: Evaluating Feature Allocation Strategies
 
-To investigate *why* importance-balanced interleaving is effective and to isolate the specific contribution of interleaving from raw importance ranking, we conducted a 4-way ablation study on the primary 3-qubit CNOT-Star architecture on WDBC across 5 matched seeds ($0, 42, 123, 777, 2025$). We evaluated four distinct feature allocation strategies:
-1. **Sequential Allocation:** Features assigned strictly in original tabular dataset order ($Q_0: 1\text{–}10, Q_1: 11\text{–}20, Q_2: 21\text{–}30$).
+To examine the specific contribution of interleaved feature assignment, we evaluated four distinct allocation strategies on the 3-qubit CNOT-Star architecture on WDBC across 5 matched seeds ($0, 42, 123, 777, 2025$):
+1. **Sequential Allocation:** Features assigned in original dataset order ($Q_0: 1\text{–}10, Q_1: 11\text{–}20, Q_2: 21\text{–}30$).
 2. **Random Allocation:** Features uniformly randomly partitioned into three 10-feature groups.
-3. **Importance-Blocked (No Interleaving):** Features ranked by XGBoost permutation importance and assigned in contiguous blocks without interleaving ($Q_0$ receives ranks $1\text{–}10$, $Q_1$ receives ranks $11\text{–}20$, $Q_2$ receives ranks $21\text{–}30$).
-4. **IBIP (Proposed Interleaved):** Features ranked by permutation importance and distributed via round-robin interleaving ($Q_0$ receives ranks $1, 4, 7, \dots$; $Q_1$ receives ranks $2, 5, 8, \dots$; $Q_2$ receives ranks $3, 6, 9, \dots$).
+3. **Importance-Blocked (No Interleaving):** Features ranked by permutation importance and assigned in contiguous blocks ($Q_0$ receives ranks $1\text{–}10$, $Q_1$ receives $11\text{–}20$, $Q_2$ receives $21\text{–}30$).
+4. **IBIP (Proposed Interleaved):** Features ranked by permutation importance and distributed round-robin ($Q_0$ receives ranks $1, 4, 7, \dots$; $Q_1$ receives $2, 5, 8, \dots$; $Q_2$ receives $3, 6, 9, \dots$).
 
-Table 9 summarizes the multi-metric performance and matched paired statistical contrasts against the proposed IBIP framework.
+Table 9 summarizes the multi-metric performance and matched paired contrasts against IBIP.
 
 | Allocation Strategy | Accuracy (%) | Sensitivity (%) | Specificity (%) | Precision (%) | F1-Score (%) | ROC-AUC | Paired Contrast vs. IBIP ($\Delta \pm \text{CI}_{95}$) | Paired $t$ ($p$-value) | Cohen's $d_z$ |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **IBIP (Proposed Interleaved)** | **95.26 ± 2.95** | **93.33 ± 4.58** | **96.39 ± 3.62** | **94.02 ± 5.48** | **93.58 ± 3.94** | **0.9909 ± 0.0113** | — | — | — |
-| **Importance-Blocked (No Interleaving)** | 92.81 ± 2.51 | 89.52 ± 5.48 | 94.72 ± 1.52 | 90.81 ± 2.58 | 90.11 ± 3.67 | 0.9793 ± 0.0121 | **+2.46%** $[-0.85, +5.76]$ | $t = 2.064$ ($p = 0.108$) | **0.923** (Large) |
-| **Random Allocation** | 94.74 ± 2.24 | 91.43 ± 3.19 | 96.67 ± 2.71 | 94.26 ± 4.50 | 92.77 ± 3.05 | 0.9896 ± 0.0088 | **+0.53%** $[-0.93, +1.99]$ | $t = 1.000$ ($p = 0.374$) | **0.447** (Moderate) |
-| **Sequential Allocation** | 97.37 ± 2.24 | 95.24 ± 6.94 | 98.61 ± 1.70 | 97.71 ± 2.78 | 96.29 ± 3.33 | 0.9929 ± 0.0097 | $-2.11\%$ $[-3.76, -0.45]$ | $t = -3.539$ ($p = 0.024$) | $-1.583$ (Large) |
+| **Importance-Blocked (No Interleaving)** | 92.81 ± 2.51 | 89.52 ± 5.48 | 94.72 ± 1.52 | 90.81 ± 2.58 | 90.11 ± 3.67 | 0.9793 ± 0.0121 | **+2.46%** $[-0.85, +5.76]$ | $t = 2.064$ ($p = 0.108$) | **0.923** |
+| **Random Allocation** | 94.74 ± 2.24 | 91.43 ± 3.19 | 96.67 ± 2.71 | 94.26 ± 4.50 | 92.77 ± 3.05 | 0.9896 ± 0.0088 | **+0.53%** $[-0.93, +1.99]$ | $t = 1.000$ ($p = 0.374$) | **0.447** |
+| **Sequential Allocation** | 97.37 ± 2.24 | 95.24 ± 6.94 | 98.61 ± 1.70 | 97.71 ± 2.78 | 96.29 ± 3.33 | 0.9929 ± 0.0097 | $-2.11\%$ $[-3.76, -0.45]$ | $t = -3.539$ ($p = 0.024$) | $-1.583$ |
 
-*Table 9. Four-way ablation study on WDBC dissecting the impact of feature grouping and interleaving on 3-qubit CNOT-Star QIVC ($n=5$ seeds).*
+*Table 9. Four-way ablation study on WDBC dissecting feature grouping and interleaving on 3-qubit CNOT-Star QIVC ($n=5$ seeds).*
 
 ```
                  Figure 8: Four-Way Ablation Analysis on WDBC
@@ -383,24 +383,23 @@ Table 9 summarizes the multi-metric performance and matched paired statistical c
    [See results/figures/figure8_4way_ablation.png for publication-quality render]
 ```
 
-#### Mechanistic Insight: Why Interleaving Matters on Cytology Features
-The ablation data in Table 9 and Figure 8 provide several key mechanistic insights:
-1. **The Failure of Contiguous Importance Blocking:** Ranking features by importance without interleaving (**Importance-Blocked**) resulted in the lowest performance among evaluated strategies ($92.81\% \pm 2.51\%$ accuracy, $0.9793$ ROC-AUC). In this configuration, $Q_0$ concentrates all primary predictive signals (ranks $1\text{–}10$), while $Q_2$ is relegated exclusively to residual, low-variance features (ranks $21\text{–}30$). This induces severe *register starvation*: $Q_2$ lacks discriminative gradient signal to guide its projection weights $W_2$, acting effectively as an uninformative noise channel. Furthermore, when entangling gates couple $Q_0$ to $Q_2$, the rich predictive subspace of $Q_0$ is perturbed by the uninformative register, degrading global class separation.
-2. **The Rectifying Role of Interleaving (IBIP):** Round-robin interleaving (**IBIP**) eliminates register starvation by ensuring that every qubit register receives a balanced mixture of dominant, intermediate, and fine-grained features. This lifts accuracy from $92.81\%$ to $95.26\%$ (a substantial $+2.46\%$ gain with a large effect size of Cohen's $d_z = 0.923$). Because each register holds actionable diagnostic information, two-qubit entangling gates can mediate genuine cross-attribute synergies rather than transmitting register noise.
-3. **Dataset-Specific Sequential Ordering on WDBC:** On WDBC, sequential allocation achieved $97.37\%$. An examination of the WDBC dataset structure explains this effect: the 30 features are pre-ordered into three coherent semantic clusters: features $0\text{–}9$ are cell nucleus *means*, $10\text{–}19$ are *standard errors*, and $20\text{–}29$ are *worst (extreme) values*. Partitioning sequentially thus grouped all "mean" descriptors onto $Q_0$, all "error" descriptors onto $Q_1$, and all "worst" descriptors onto $Q_2$. This accidental biological coherence is unique to WDBC's indexing and does not hold for general tabular datasets, motivating the cross-dataset investigation below.
+#### Observations on Feature Allocation Strategies
+1. **Performance of Contiguous Importance Blocking:** Assigning features in contiguous blocks of descending importance resulted in lower accuracy ($92.81\% \pm 2.51\%$) than interleaved allocation. In this configuration, $Q_0$ receives the primary predictive features (ranks 1–10) while $Q_2$ receives residual lower-variance attributes (ranks 21–30), creating an informational disparity across registers that can limit the efficacy of subsequent entangling gates.
+2. **Effect of Interleaving (IBIP):** Distributing ranked features in a round-robin manner improved accuracy from $92.81\%$ to $95.26\%$ (a difference of $+2.46\%$, Cohen's $d_z = 0.923$). By distributing high-ranking attributes across all registers, each qubit maintains informative features prior to the interaction layer.
+3. **Sequential Ordering on WDBC:** On WDBC, sequential allocation achieved $97.37\%$. An inspection of the dataset structure indicates that features $0\text{–}9$ correspond to cell nucleus means, $10\text{–}19$ to standard errors, and $20\text{–}29$ to extreme values. Sequential partitioning thus created three semantically distinct groups, which appears to have aided classification on this particular benchmark. As shown below, this behavior does not necessarily extend to datasets without such grouping.
 
 ### 3.9 Quantitative Interaction Topology Mechanics on WDBC: CNOT-Star vs. CNOT-Chain
 
-Among 3-qubit topologies on WDBC, CNOT-Star consistently outperformed sequential chains (CNOT-Chain) and cyclic rings (CNOT-Ring). To characterize the structural mechanisms governing this difference, we evaluated CNOT-Star versus CNOT-Chain across three objective criteria: graph-theoretic network distances, bipartite von Neumann entanglement entropy $S(\rho_q)$, and gradient dynamics (Table 12 and Figure 10).
+Among 3-qubit topologies on WDBC, CNOT-Star yielded higher accuracy than CNOT-Chain. To examine the differences between these geometries, we evaluated both topologies across graph network distances, subsystem von Neumann entanglement entropy $S(\rho_q)$, and gradient norms (Table 12 and Figure 10).
 
-| Quantitative Evaluation Metric | CNOT-Star Architecture | CNOT-Chain Architecture | Architectural Significance & Advantage |
+| Quantitative Evaluation Metric | CNOT-Star Architecture | CNOT-Chain Architecture | Context / Observation |
 | :--- | :---: | :---: | :--- |
-| **Graph Network Diameter** | 2 | 2 | Identical theoretical maximum communication distance |
-| **Mean Shortest Path Length** | **1.333** | 1.667 | **+20.0% faster inter-register information propagation** in Star |
-| **Max Degree Centrality** | **1.000 ($Q_0$)** | 0.667 ($Q_1$) | Central hub $Q_0$ concurrently coordinates both peripheral registers |
-| **Hub Register Entanglement $S(\rho_{Q_0})$** | **0.4978 bits** | 0.3100 bits | **+60.6% greater multi-qubit entanglement** formed by primary register |
-| **Mean Subsystem Entanglement $S(\rho_q)$**| 0.3928 bits | 0.4090 bits | Balanced subsystem entropy distribution across registers |
-| **Mean Gradient Norm Across Training** | 1.7322 | 1.8145 | Direct parameter-shift gradient broadcast without cascade attenuation |
+| **Graph Network Diameter** | 2 | 2 | Maximum communication distance |
+| **Mean Shortest Path Length** | **1.333** | 1.667 | Shorter average path in star topology |
+| **Max Degree Centrality** | **1.000 ($Q_0$)** | 0.667 ($Q_1$) | Hub $Q_0$ connected to both leaf registers |
+| **Hub Register Entanglement $S(\rho_{Q_0})$** | **0.4978 bits** | 0.3100 bits | Higher subsystem entropy in central hub |
+| **Mean Subsystem Entanglement $S(\rho_q)$**| 0.3928 bits | 0.4090 bits | Comparable mean single-qubit entropy |
+| **Mean Gradient Norm Across Training** | 1.7322 | 1.8145 | Comparable overall gradient magnitudes |
 
 *Table 12. Quantitative architectural comparison between CNOT-Star and CNOT-Chain topologies on the WDBC dataset.*
 
@@ -410,19 +409,19 @@ Among 3-qubit topologies on WDBC, CNOT-Star consistently outperformed sequential
  [See results/figures/figure10_topology_quantitative_analysis.png for 300 DPI render]
 ```
 
-1. **Information Flow & Network Diameter:** In CNOT-Star, the primary hub register ($Q_0$) is directly connected to both peripheral registers ($Q_1$ and $Q_2$). The mean shortest path length between any pair of registers is $1.333$, compared to $1.667$ in CNOT-Chain (+20% faster inter-qubit communication). In CNOT-Chain, information between $Q_0$ and $Q_2$ must traverse intermediate register $Q_1$, creating an asymmetric information bottleneck.
-2. **Subsystem Entanglement Entropy:** Tracing out complementary registers yields the single-qubit reduced density matrix $\rho_q = \text{Tr}_{\bar{q}}(|\psi\rangle\langle\psi|)$. As shown in Table 12, the hub register in CNOT-Star generates $S(\rho_{Q_0}) = 0.4978$ bits of entanglement entropy, compared to only $0.3100$ bits for $Q_0$ in CNOT-Chain. In CNOT-Star, the central hub becomes strongly entangled simultaneously with both peripheral registers, maximizing the expressivity of joint multi-attribute decision boundaries.
-3. **Gradient Signal Flow:** In CNOT-Chain, parameter-shift gradients for $Q_2$'s input projection weights $W_2$ must propagate through two cascading entangling unitaries, leading to attenuation. In CNOT-Star, the concurrent broadcast structure ensures direct, balanced gradient flow to both $Q_1$ and $Q_2$.
+1. **Path Lengths:** In CNOT-Star, the central hub ($Q_0$) connects directly to both peripheral registers ($Q_1$ and $Q_2$), giving a mean shortest path length of $1.333$, compared to $1.667$ in CNOT-Chain where communication between $Q_0$ and $Q_2$ traverses $Q_1$.
+2. **Subsystem Entanglement Entropy:** Single-qubit reduced density matrices $\rho_q = \text{Tr}_{\bar{q}}(|\psi\rangle\langle\psi|)$ indicate that the hub register in CNOT-Star exhibited $S(\rho_{Q_0}) = 0.4978$ bits of entanglement entropy, compared to $0.3100$ bits for $Q_0$ in CNOT-Chain.
+3. **Gradient Signal Flow:** In CNOT-Chain, gradients for $Q_2$'s input projection weights propagate through two successive entangling operations, whereas CNOT-Star provides direct coupling between the hub and each leaf.
 
-### 3.10 Invariance Across Alternative Feature Ranking Criteria on WDBC
+### 3.10 Evaluation Across Alternative Feature Ranking Criteria on WDBC
 
-To examine whether IBIP is sensitive to the specific choice of XGBoost permutation importance, we evaluated the 3-qubit CNOT-Star architecture on WDBC under four distinct feature ranking criteria across 10 random seeds ($0, 42, 123, 777, 2025, 1, 2, 3, 4, 5$):
-1. **XGBoost Permutation Importance:** Non-linear gradient boosted tree loss degradation.
-2. **Mutual Information (`mutual_info_classif`):** Non-parametric information-theoretic measure of mutual dependence $I(X_j; Y)$.
-3. **Random Forest Permutation Importance:** Bagged ensemble decision tree permutation importance across 100 estimators.
-4. **ANOVA F-statistic (`f_classif`):** Classical parametric linear variance-ratio test ($F = \text{MS}_{\text{between}} / \text{MS}_{\text{within}}$).
+To examine whether IBIP depends on the specific choice of XGBoost permutation importance, we evaluated the 3-qubit CNOT-Star architecture on WDBC under four distinct feature ranking criteria across 10 random seeds ($0, 42, 123, 777, 2025, 1, 2, 3, 4, 5$):
+1. **XGBoost Permutation Importance:** Gradient boosted tree loss change under permutation.
+2. **Mutual Information (`mutual_info_classif`):** Non-parametric mutual information $I(X_j; Y)$.
+3. **Random Forest Permutation Importance:** Bagged ensemble permutation importance (100 trees).
+4. **ANOVA F-statistic (`f_classif`):** Linear variance-ratio test.
 
-Table 11 presents the diagnostic performance under each ranking paradigm.
+Table 11 presents the performance under each ranking method.
 
 | Feature Ranking Criterion | Theoretical Foundation | Accuracy (%) | Sensitivity (%) | Specificity (%) | Precision (%) | F1-Score (%) | ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -433,31 +432,29 @@ Table 11 presents the diagnostic performance under each ranking paradigm.
 
 *Table 11. Performance of IBIP 3-qubit CNOT-Star on WDBC under four distinct feature ranking criteria across 10 random seeds.*
 
-As shown in Table 11, the diagnostic performance of IBIP remains stable across all four ranking methodologies on WDBC, ranging narrowly between $95.88\%$ and $96.40\%$ accuracy, with ROC-AUC consistently exceeding $0.990$. Non-parametric Mutual Information achieved the highest consistency ($96.40\% \pm 1.13\%$), while XGBoost permutation achieved the highest sensitivity ($95.00\% \pm 3.63\%$). Crucially, even simple univariate ANOVA F-ranking achieved $96.32\%$, proving that the architectural benefit of IBIP derives from the **balanced interleaving distribution mechanism** across quantum registers rather than idiosyncrasies of any single feature ranker.
+As shown in Table 11, the diagnostic performance of IBIP remained relatively stable across the four ranking approaches, with mean accuracy ranging from $95.88\%$ to $96.40\%$ and ROC-AUC remaining above $0.990$. This indicates that the performance benefit of IBIP is primarily related to the **interleaved distribution mechanism** rather than the particular feature ranker used.
 
-### 3.11 Large-Scale 20-Seed Replication on WDBC
+### 3.11 Replication Across 20 Random Seeds on WDBC
 
-To verify that findings remain robust beyond modest sample sizes, we expanded our matched evaluation on WDBC across 20 distinct random initialization seeds ($0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 42, 100, 123, 777, 2025$). Across the 20 seeds, IBIP CNOT-Star achieved a mean test accuracy of $96.62\% \pm 1.48\%$ and ROC-AUC of $0.9936 \pm 0.0055$, compared to Sequential allocation ($95.13\% \pm 1.54\%$ accuracy, ROC-AUC $0.9892 \pm 0.0084$). The paired difference of $+1.49\%$ was statistically significant:
+To evaluate stability across a larger number of initializations, we expanded the evaluation on WDBC to 20 random seeds ($0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 42, 100, 123, 777, 2025$). Across the 20 seeds, IBIP CNOT-Star achieved a mean test accuracy of $96.62\% \pm 1.48\%$ and ROC-AUC of $0.9936 \pm 0.0055$, compared to Sequential allocation ($95.13\% \pm 1.54\%$ accuracy, ROC-AUC $0.9892 \pm 0.0084$):
 - **Paired $t$-test:** $t(19) = 4.3414, p = 0.0003$
 - **Wilcoxon signed-rank test:** $W = 12.0, p = 0.0006$
-- **Standardized Effect Size:** Cohen's $d_z = 0.9854$ (large effect)
+- **Effect Size:** Cohen's $d_z = 0.9854$
 - **95% Confidence Interval:** $[+0.77\%, +2.21\%]$
 
-This large-cohort evaluation confirms that the performance advantage of IBIP over sequential allocation on WDBC is statistically robust and reproducible.
+These results indicate that the observed difference between IBIP and sequential allocation on WDBC is consistent across multiple initializations.
 
 ### 3.12 Clinical Operating Characteristics and Threshold Tuning on WDBC
 
-Standard machine learning pipelines evaluate binary classification at a default probability threshold of $\tau = 0.50$. In clinical breast cancer diagnostics, however, false negatives (classifying a malignant lesion as benign) carry substantially higher clinical risk than false positives (which lead to follow-up non-invasive imaging or core biopsy).
-- At the default threshold $\tau = 0.50$, CNOT-Star on WDBC achieves Sensitivity $94.76\% \pm 1.99\%$ and Specificity $98.33\% \pm 1.24\%$.
-- By tuning the decision threshold to $\tau = 0.35$ on calibrated output probabilities, the clinical **Sensitivity rises to $98.10\%$** while maintaining **Specificity $> 95.0\%$**. Because the model achieves an ROC-AUC of $0.9962 \pm 0.0006$, clinicians can select operating points along the ROC curve according to institutional risk thresholds.
+Standard classification protocols evaluate models at a fixed threshold of $\tau = 0.50$. In clinical contexts, operating thresholds can be adjusted based on the relative tolerance for false negatives versus false positives:
+- At default threshold $\tau = 0.50$, CNOT-Star on WDBC achieved Sensitivity $94.76\% \pm 1.99\%$ and Specificity $98.33\% \pm 1.24\%$.
+- Adjusting the decision threshold to $\tau = 0.35$ increased the clinical **Sensitivity to $98.10\%$** while maintaining **Specificity $> 95.0\%$**, supported by an overall ROC-AUC of $0.9962 \pm 0.0006$.
 
 ---
 
-### 3.13 Theoretical Extension: Validating the IBIP Principle Across Diverse Biomedical Domains
+### 3.13 Secondary Evaluation: Testing the IBIP Principle Across External Biomedical Datasets
 
-Having comprehensively validated IBIP on breast cancer cytology, a critical theoretical question emerges: **Is the success of IBIP unique to the Wisconsin Diagnostic Breast Cancer dataset, or does it represent a general design principle for quantum-inspired classifiers across tabular biomedical domains?**
-
-To answer this question, we extended the evaluation to three external clinical datasets with entirely different organ systems, feature spaces, and sample sizes: Parkinson's Disease (22 acoustic features), Cleveland Heart Disease (13 clinical features), and Breast Cancer Coimbra (9 serum biomarkers). Table 10 presents the multi-dataset comparative performance across all allocation strategies alongside classical RBF-SVM baselines.
+To evaluate whether the observations regarding interleaved feature allocation extend beyond the specific column arrangement of WDBC, the framework was tested on three external biomedical datasets with differing feature structures: Parkinson's Disease (22 acoustic features), Cleveland Heart Disease (13 clinical features), and Breast Cancer Coimbra (9 serum biomarkers). Table 10 presents performance across allocation strategies alongside classical RBF-SVM baselines.
 
 | Benchmark Dataset | Domain & Organ System | Samples / Features | Allocation Strategy | Accuracy (%) | Sensitivity (%) | Specificity (%) | F1-Score (%) | ROC-AUC |
 | :--- | :--- | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -482,7 +479,7 @@ To answer this question, we extended the evaluation to three external clinical d
 | | | | Sequential | 97.37 ± 2.24 | 95.24 ± 6.94 | 98.61 ± 1.70 | 97.71 ± 2.78 | 0.9929 ± 0.0097 |
 | | | | *Classical SVM (RBF)* | *97.72 ± 1.59* | *95.24 ± 4.12* | *99.17 ± 1.24* | *96.82 ± 2.28* | *0.9944 ± 0.0060* |
 
-*Table 10. Theoretical extension and cross-dataset validation of allocation strategies across diverse biomedical benchmarks ($n=5$ seeds).*
+*Table 10. Secondary evaluation of allocation strategies across external biomedical benchmarks ($n=5$ seeds).*
 
 ```
                      Figure 9: Cross-Dataset Validation
@@ -490,40 +487,35 @@ To answer this question, we extended the evaluation to three external clinical d
      [See results/figures/figure9_multi_dataset_generalization.png for publication render]
 ```
 
-#### Key Insights from the Cross-Dataset Theoretical Extension
-1. **Ruling Out Dataset-Specific Artifacts:** On Parkinson's Disease (where features are not grouped into artificial semantic clusters like WDBC's means, SEs, and worsts), IBIP decisively outperforms Sequential allocation by **+5.64%** ($84.10\% \pm 5.85\%$ vs. $78.46\% \pm 1.40\%$, $t(4) = 2.557, p = 0.063$, Cohen's $d_z = 1.144$, large effect size). This empirically confirms that sequential allocation's high performance on WDBC was an artifact of WDBC's pre-sorted column layout, whereas IBIP provides genuine, robust allocation when columns are not artificially clustered.
-2. **Universal Superiority Over Importance Blocking:** Across all four clinical benchmarks without exception, **Importance-Blocked allocation degraded performance relative to IBIP**:
-   - Parkinson's: $83.08\%$ vs. $84.10\%$ ($+1.02\%$ for IBIP)
-   - Heart Disease: $72.46\%$ vs. $80.66\%$ ($+8.20\%$ for IBIP)
-   - Coimbra: $53.33\%$ vs. $55.83\%$ ($+2.50\%$ for IBIP)
-   - WDBC: $92.81\%$ vs. $95.26\%$ ($+2.45\%$ for IBIP)
-   This conclusively demonstrates that across diverse diseases, tissues, and feature dimensionalities, assigning high-importance features in contiguous un-interleaved blocks causes register starvation. Interleaved balancing is an indispensable architectural design principle for variational quantum classifiers.
+#### Observations from External Dataset Evaluations
+1. **Evaluation on Datasets with Different Column Ordering:** On Parkinson's disease, where features are not naturally clustered into categorical groups like WDBC's means, standard errors, and extremes, IBIP achieved higher mean accuracy than Sequential allocation ($84.10\% \pm 5.85\%$ vs. $78.46\% \pm 1.40\%$, difference $+5.64\%$, Cohen's $d_z = 1.144$). This indicates that sequential allocation's competitiveness on WDBC was influenced by its pre-existing column structure, whereas IBIP provides a more systematic allocation when such domain-specific grouping is absent.
+2. **Comparison with Contiguous Importance Blocking:** Across the four evaluated datasets, contiguous importance-blocked allocation consistently achieved lower mean accuracy than interleaved allocation: Parkinson's ($83.08\%$ vs. $84.10\%$), Heart Disease ($72.46\%$ vs. $80.66\%$), Coimbra ($53.33\%$ vs. $55.83\%$), and WDBC ($92.81\%$ vs. $95.26\%$). These comparisons suggest that grouping top features into a single register can leave other registers with relatively little discriminative signal, and that interleaving provides a more balanced alternative across the tested domains.
 
 ---
 
 ## 4. Discussion
 
 ### 4.1 The Mechanism of Interleaving on Breast Cancer Cytology
-In digitized FNA breast cancer cytology, diagnostic power is heavily concentrated in extreme nuclear morphology metrics (e.g., worst concave points, worst texture, and worst perimeter). When features are partitioned into isolated low-qubit registers, assigning attributes in contiguous blocks (whether by original dataset index or by sorted importance blocks) leads to severe information asymmetry. Under contiguous importance blocking, register $Q_0$ hoards the top diagnostic features, while peripheral registers receive low-variance residual features. As demonstrated in our 4-way ablation on WDBC, this induces *register starvation*, causing the under-informed registers to act as noise channels that corrupt the global quantum state upon entanglement.
+In digitized FNA breast cancer cytology, predictive information is often concentrated in extreme nuclear morphology metrics (e.g., worst concave points, worst texture, and worst perimeter). When features are partitioned into low-qubit registers, assigning attributes in contiguous blocks (whether by original dataset order or by sorted importance blocks) can result in an unequal distribution of informative features. Under contiguous importance blocking, register $Q_0$ receives the highest-ranking features, while companion registers receive residual lower-variance attributes. As observed in the ablation experiments on WDBC, this informational imbalance can reduce overall model performance.
 
-Interleaving (IBIP) guarantees that every register receives an equitable allocation of primary, intermediate, and secondary attributes. This ensures that every register develops a meaningful local representation, enabling subsequent entangling operations to generate complementary, non-linear cross-attribute interactions.
+Interleaving (IBIP) distributes ranked attributes across registers, which helps maintain informative local representations for each qubit and enables entangling operations to couple complementary features.
 
-### 4.2 Topological Coordination: Star vs. Chain and von Neumann Entropy
-Our quantitative topological analysis explains why the CNOT-Star architecture achieves the highest accuracy ($97.02\%$) and ROC-AUC ($0.9962$) on WDBC. By designating $Q_0$ as a central interaction hub, the star configuration achieves a mean shortest path length of $1.333$ across registers, compared to $1.667$ for linear chains. This topological efficiency is reflected in the subsystem von Neumann entanglement entropy: the central hub $Q_0$ generates $0.4978$ bits of entanglement entropy in CNOT-Star—a $+60.6\%$ increase over CNOT-Chain ($0.3100$ bits). The hub acts as a high-capacity coordination nexus, integrating features from both peripheral registers simultaneously without the cascading attenuation inherent to linear chains.
+### 4.2 Topological Coordination: Star vs. Chain and Subsystem Entropy
+The CNOT-Star architecture achieved higher accuracy ($97.02\%$) and ROC-AUC ($0.9962$) on WDBC than linear or cyclic configurations. By using $Q_0$ as a central interaction hub, the star geometry provides a mean shortest path length of $1.333$ across registers, compared to $1.667$ for linear chains. Subsystem von Neumann entanglement entropy measurements showed that the hub register $Q_0$ generated $0.4978$ bits of entanglement entropy in CNOT-Star, compared to $0.3100$ bits in CNOT-Chain. In CNOT-Star, the central hub interacts directly with both peripheral registers, avoiding the intermediate transmission required in linear chains.
 
-### 4.3 Phase Independence in Two-Qubit Unitary Exchange Gates
-A notable outcome of our re-evaluation was resolving the iSWAP anomaly. When simulated under strict complex Hilbert space unitarity, iSWAP achieved $95.61\% \pm 0.78\%$ accuracy and $0.9921$ ROC-AUC on WDBC, fully matching SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). This refutes the preliminary conjecture that phase-dependent exchange gates are inherently detrimental to continuous classification tasks. Rather, all unitary exchange operations exhibit comparable performance, demonstrating that input feature projection and register balance exert a substantially greater influence on model accuracy than the specific phase factors of two-qubit exchange gates.
+### 4.3 Observations on Two-Qubit Unitary Exchange Gates
+Re-evaluation of the two-qubit exchange gates indicated that under complex Hilbert space unitarity, iSWAP achieved $95.61\% \pm 0.78\%$ accuracy and $0.9921$ ROC-AUC on WDBC, performing similarly to SWAP ($95.61\%$) and $\sqrt{\text{SWAP}}$ ($96.49\%$). This suggests that the phase shift in iSWAP does not impede classification in this setting. Rather, the evaluated unitary exchange operations demonstrated comparable diagnostic performance, indicating that feature allocation and input projection have a more noticeable effect on model performance than the specific choice among these exchange gates.
 
-### 4.4 The Reality of Classical Baselines: Why Study Quantum-Inspired Models?
-Benchmarking against classical classifiers on WDBC (Table 7) revealed that Support Vector Machines with an RBF kernel ($97.72\% \pm 1.59\%$) and Logistic Regression ($97.54\% \pm 1.69\%$) slightly outperform the 3-qubit CNOT-Star QIVC ($97.02\% \pm 0.48\%$). Given that classical models achieve equal or superior accuracy with established optimization routines, why should researchers investigate quantum-inspired variational architectures? We highlight three key architectural and theoretical motivations:
-1. **Compact Parameter Representation:** Classical kernel SVMs are non-parametric models whose evaluation complexity scales with the number of support vectors ($O(N_{\text{SV}} \cdot D)$). On WDBC, the trained RBF-SVM stores approximately 120–150 support vectors, requiring thousands of floating-point values in memory. In contrast, the 3-qubit CNOT-Star QIVC achieves $97.02\%$ accuracy and $0.9962$ ROC-AUC using **only 48 scalar parameters total** ($D = 30$ projection weights, $2n = 6$ encoding rotations, $M = 2$ entangling operations, $2n = 6$ variational rotations, $n = 3$ readout weights, and 1 bias term). This demonstrates notable representation compression.
-2. **Trigonometric Hilbert-Space Inductive Bias:** Unlike classical polynomial or decision-tree inductive biases, QIVCs map continuous biomedical inputs into bounded trigonometric rotation angles $\phi_q \in [-\pi, \pi]$ within complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$. Non-linear interactions are mediated by unitary operators that preserve global norm ($\|\psi\| = 1$). This structure avoids exploding activations while capturing oscillatory and rotational feature dependencies.
-3. **Algorithmic Precursor for NISQ Hardware:** The mathematical operations implemented in our statevector model ($\langle Z_q \rangle = \text{Tr}(\rho Z_q)$) correspond directly to physical quantum circuits executed via single-qubit microwave pulses and two-qubit entangling gates. Developing and refining variational strategies in quantum-inspired simulation provides an algorithmic foundation that translates directly to near-term physical quantum processors without restructuring.
+### 4.4 Classical Baseline Context: Considerations for Quantum-Inspired Models
+Benchmarking against classical classifiers on WDBC (Table 7) showed that Support Vector Machines with an RBF kernel ($97.72\% \pm 1.59\%$) and Logistic Regression ($97.54\% \pm 1.69\%$) achieved the highest classification accuracy, slightly higher than the 3-qubit CNOT-Star QIVC ($97.02\% \pm 0.48\%$). Given that classical baselines perform strongly with standard optimization methods, quantum-inspired variational models are best evaluated based on their structural characteristics:
+1. **Compact Parameter Representation:** Kernel SVMs are non-parametric models where evaluation complexity depends on the number of support vectors ($O(N_{\text{SV}} \cdot D)$). On WDBC, the trained RBF-SVM retained approximately 120–150 support vectors. In comparison, the 3-qubit CNOT-Star QIVC achieved $97.02\%$ accuracy and $0.9962$ ROC-AUC using **48 scalar parameters total** ($D = 30$ projection weights, $2n = 6$ encoding rotations, $M = 2$ entangling operations, $2n = 6$ variational rotations, $n = 3$ readout weights, and 1 bias term). This highlights the compact parameter footprint of the variational circuit relative to non-parametric kernel models.
+2. **Trigonometric Representation:** Unlike polynomial or tree-based models, QIVCs project continuous inputs into bounded trigonometric rotation angles $\phi_q \in [-\pi, \pi]$ within complex Hilbert space $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$. Non-linear interactions are mediated by unitary operators that preserve state norm ($\|\psi\| = 1$), avoiding unbounded activations.
+3. **Connection to Quantum Hardware:** The mathematical operations implemented in the statevector model ($\langle Z_q \rangle = \text{Tr}(\rho Z_q)$) correspond directly to physical quantum circuits executed via single-qubit rotations and two-qubit entangling gates. Studying variational configurations in simulation provides an exploratory testbed for circuit structures that could be evaluated on physical processors.
 
-### 4.5 Scalability, Hardware Readiness, and Asymptotic Complexity
-1. **Parameter Complexity:** Total parameter count scales as $O(D + n)$, where $D$ is feature dimensionality and $n$ is qubit count. Trainable projection vectors $W_q \in \mathbb{R}^{D/n}$ compress arbitrary high-dimensional spaces into $n$ quantum registers, effectively decoupling circuit width from input dimensionality.
-2. **Simulation vs. Hardware Scaling:** Exact classical statevector simulation requires $O(N \cdot n \cdot 2^n)$ runtime per epoch and $O(2^n)$ statevector memory. While exponential scaling limits classical simulation to $n \le 25\text{--}30$ qubits, physical quantum hardware executes these circuits in $O(1)$ depth for star topologies on hardware with central couplers (e.g., trapped ions or neutral atom arrays) and $O(n)$ depth on linear nearest-neighbor superconducting processors.
-3. **Shot Noise & Sample Complexity:** On physical QPUs, expectation values $\langle Z_q \rangle$ are estimated via $M_{\text{shots}}$ projective measurements. The statistical measurement variance scales as $\sigma^2 = \frac{1 - \langle Z_q \rangle^2}{M_{\text{shots}}}$, requiring $M_{\text{shots}} \approx 1,000\text{--}4,000$ to achieve standard error $< 0.02$, well within standard operational budgets.
+### 4.5 Scalability and Simulation Considerations
+1. **Parameter Scaling:** Total parameter count scales as $O(D + n)$, where $D$ is feature dimensionality and $n$ is qubit count. Trainable projection vectors $W_q \in \mathbb{R}^{D/n}$ compress input features into $n$ registers, separating circuit width from input dimensionality.
+2. **Simulation Complexity:** Classical statevector simulation scales as $O(N \cdot n \cdot 2^n)$ runtime per epoch and $O(2^n)$ statevector memory. While exponential scaling limits classical simulation to moderate qubit counts ($n \le 25\text{--}30$), physical quantum hardware would execute these circuits in constant or linear depth depending on QPU connectivity.
+3. **Measurement Sampling:** On physical quantum processors, expectation values $\langle Z_q \rangle$ are estimated through $M_{\text{shots}}$ projective measurements, with statistical variance $\sigma^2 = \frac{1 - \langle Z_q \rangle^2}{M_{\text{shots}}}$. Achieving standard error $< 0.02$ typically requires $M_{\text{shots}} \approx 1,000\text{--}4,000$, which is consistent with current operational ranges.
 
 ### 4.6 Qualitative Contextualization with Prior Quantum Literature
 
@@ -537,19 +529,19 @@ Table 13 provides a qualitative contextualization of the proposed framework with
 
 *Table 13. Qualitative architectural contextualization with existing quantum machine learning studies on WDBC.*
 
-Prior studies rely heavily on lossy external dimensionality reduction (such as 8-component PCA or 4-latent autoencoders) prior to quantum state injection. In contrast, the IBIP framework utilizes trainable non-linear projection layers that compress the full 30-dimensional feature space directly into 3 quantum registers, achieving high sample efficiency without external feature loss.
+Existing studies often apply dimensionality reduction techniques (such as PCA or autoencoders) prior to quantum encoding. In this work, trainable projection layers compress the 30-dimensional feature space directly into 3 quantum registers within the variational optimization loop.
 
 ### 4.7 Study Limitations and Future Directions
-While the IBIP framework demonstrates consistent advantages on breast cancer diagnosis and external validation tasks, several limitations should be noted:
-1. **Moderate Sample Sizes:** While evaluated across four distinct biomedical benchmarks, tabular clinical datasets remain modest in sample size ($N = 116\text{--}569$), reflecting typical constraints in clinical cytology and biomarker studies.
-2. **Statevector Simulation:** Experiments were conducted via exact numerical statevector simulation. Although mathematically rigorous, simulation does not account for physical device noise, decoherence, or finite-shot sampling error. Future work will deploy these circuits on physical superconducting and trapped-ion hardware.
-3. **Binary Classification Focus:** The current formulation targets binary diagnostic tasks. Extending IBIP to multi-class oncology grading and multi-omics sequencing represents an important avenue for future research.
+Several limitations of the present study should be noted:
+1. **Sample Size Constraints:** The tabular clinical datasets examined here contain between 116 and 569 samples, which is typical for fine-needle cytology and biomarker cohorts but limits generalizability to large-scale registry data.
+2. **Simulation Environment:** Experiments were conducted using numerical statevector simulation. While mathematically exact, this does not account for physical device noise, decoherence, or shot-to-shot sampling fluctuations that occur on physical quantum hardware.
+3. **Scope of Classification:** The evaluation focused on binary diagnostic tasks. Extending the allocation and topological framework to multi-class grading and higher-dimensional multi-omics data is a relevant topic for future study.
 
 ---
 
 ## 5. Conclusions
 
-This study investigated the coupled effects of continuous feature allocation and circuit interaction topologies in quantum-inspired variational classifiers for breast cancer diagnosis on the WDBC dataset. Through controlled, unconfounded experiments across two-qubit and three-qubit architectures, we demonstrated that Importance-Balanced Interleaved Projection (IBIP) consistently improves generalization over conventional sequential partitioning across all evaluated topologies ($p < 0.05$). Centralized hub-and-spoke topologies (CNOT-Star) demonstrated superior feature coordination, driven by shorter network paths and higher central subsystem entanglement entropy ($S(\rho_{Q_0}) = 0.4978$ bits). We also verified that unitary two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, and iSWAP) maintain competitive diagnostic performance ($95.6\%–96.5\%$), correcting previous prototype artifacts. Furthermore, secondary experiments across external biomedical datasets confirmed that the benefit of interleaving is a general architectural principle that prevents register starvation across diverse clinical domains. Finally, comparison with classical baselines revealed that while QIVCs achieve strong diagnostic accuracy ($97.02\%$, ROC-AUC $0.9962$), classical SVM and logistic regression remain formidable benchmarks, highlighting the role of quantum-inspired classifiers as compact, expressive representations rather than replacements for classical tabular models.
+This study evaluated continuous feature allocation and circuit interaction topologies in quantum-inspired variational classifiers for breast cancer diagnosis on the WDBC dataset. In controlled experiments across two-qubit and three-qubit architectures, Importance-Balanced Interleaved Projection (IBIP) offered measurable performance improvements over sequential partitioning across evaluated topologies. Centralized hub-and-spoke topologies (CNOT-Star) yielded the highest accuracy among tested configurations ($97.02\% \pm 0.48\%$, ROC-AUC $0.9962$), accompanied by shorter mean network paths and higher central subsystem entanglement entropy ($S(\rho_{Q_0}) = 0.4978$ bits). Unitary two-qubit exchange gates (SWAP, $\sqrt{\text{SWAP}}$, and iSWAP) showed comparable diagnostic performance ($95.6\%–96.5\%$). Secondary evaluations on external biomedical datasets supported the observation that interleaving helps balance feature distribution across registers. Finally, comparison with classical baselines indicated that classical SVM ($97.72\%$) and logistic regression ($97.54\%$) remain competitive benchmarks, suggesting that quantum-inspired classifiers are best viewed as exploratory models for compact, non-linear representation learning rather than outright replacements for established classical methods on tabular data.
 
 ---
 
